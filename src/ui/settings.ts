@@ -12,6 +12,12 @@ const AI_MODELS = [
     { v: 'gemini-2.0-flash', t: 'Gemini 2.0 Flash' },
     { v: 'gemini-2.5-pro', t: 'Gemini 2.5 Pro' },
   ] },
+  { group: 'OpenRouter GRATIS (daftar di openrouter.ai)', options: [
+    { v: 'openrouter/deepseek/deepseek-r1-0528:free', t: 'DeepSeek R1 0528 (gratis, sangat pintar)' },
+    { v: 'openrouter/qwen/qwen3-235b-a22b:free', t: 'Qwen 3 235B (gratis, pintar)' },
+    { v: 'openrouter/meta-llama/llama-4-maverick:free', t: 'Llama 4 Maverick (gratis)' },
+    { v: 'openrouter/google/gemma-3-27b-it:free', t: 'Gemma 3 27B (gratis, cepat)' },
+  ] },
   { group: 'Groq (perlu API key sendiri)', options: [
     { v: 'llama-3.3-70b-versatile', t: 'Llama 3.3 70B' },
     { v: 'mixtral-8x7b-32768', t: 'Mixtral 8x7B' },
@@ -66,7 +72,7 @@ export function renderSettings(): void {
 
     <div class="card">
       <h3 style="margin-top:4px">AI Tutor</h3>
-      <p class="muted" style="margin-top:0">Secara default app memakai <b>AI server bawaan</b> (Gemini) - tidak perlu API key, asalkan <code>GEMINI_API_KEY</code> sudah diset di server Vercel. Untuk memakai key/penyedia sendiri (Gemini, Claude via <a href="https://console.anthropic.com/" target="_blank">Anthropic</a>, atau Groq), isi di bawah; jika diisi, key inilah yang dipakai dari browser.</p>
+      <p class="muted" style="margin-top:0">Secara default app memakai <b>AI server bawaan</b> (Gemini). Untuk penyedia lain, isi API key di bawah. <b>Rekomendasi GRATIS:</b> daftar di <a href="https://openrouter.ai" target="_blank">openrouter.ai</a>, ambil API key, lalu pilih model OpenRouter di bawah (DeepSeek R1 sangat pintar!). Juga mendukung <a href="https://console.groq.com/" target="_blank">Groq</a> dan <a href="https://console.anthropic.com/" target="_blank">Claude</a>.</p>
       <div class="field"><label>API Key (opsional)</label><input class="fld" id="aiKey" type="password" value="${localStorage.getItem('kalk2_ai_backend') || ''}" placeholder="Kosongkan untuk pakai server bawaan"></div>
       <div class="field" style="max-width:320px"><label>Model</label><select class="fld" id="aiModel">${modelOptions(selectedModel)}</select></div>
       <button class="btn sm" id="aiSave">Simpan konfigurasi AI</button>

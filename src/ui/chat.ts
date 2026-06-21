@@ -83,6 +83,41 @@ export function setupFloatingChat(): void {
       aMsg.className = 'ai-msg';
       aMsg.innerHTML = renderMarkdown(ans);
       typeset(aMsg);
+
+      // Feedback buttons
+      const fb = document.createElement('div');
+      fb.style.marginTop = '10px';
+      fb.style.display = 'flex';
+      fb.style.gap = '8px';
+      fb.innerHTML = `
+        <button class="btn ghost2 sm fb-like">Like</button>
+        <button class="btn ghost2 sm fb-dislike">Dislike</button>
+      `;
+      aMsg.appendChild(fb);
+
+      const btnLike = fb.querySelector('.fb-like') as HTMLButtonElement;
+      const btnDislike = fb.querySelector('.fb-dislike') as HTMLButtonElement;
+
+      btnLike.onclick = async () => {
+        btnLike.disabled = true;
+        btnDislike.style.display = 'none';
+        btnLike.textContent = 'Menyimpan...';
+        try {
+          const { state, save } = await import('../storage/state.ts');
+          const sys = 'Tolong rangkum gaya penulisan, format (misal step-by-step, bullet points), dan *tone* dari teks berikut ke dalam 1 kalimat instruksi yang sangat singkat. JANGAN BAHAS MATERINYA. Berikan HANYA kalimat instruksi tersebut.';
+          const styleInfo = await callAITutor(sys, ans);
+          state.aiStyleRules = styleInfo;
+          save();
+          btnLike.textContent = 'Gaya Disimpan';
+        } catch (e) {
+          btnLike.textContent = 'Gagal';
+        }
+      };
+
+      btnDislike.onclick = () => {
+        fb.innerHTML = '<span style="font-size:12px;color:var(--muted)">Sesi ini tidak akan dijadikan acuan.</span>';
+      };
+
     } catch (e: any) {
       aMsg.className = 'ai-msg error';
       aMsg.textContent = `Error: ${e.message}`;

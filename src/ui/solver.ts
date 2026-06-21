@@ -133,13 +133,44 @@ export async function callAITutor(systemPrompt: string, userPrompt: string): Pro
     }
   }
 
-  return callProviderDirect(localKey, model, systemPrompt, userPrompt);
+  let finalSystem = systemPrompt;
+  if (state.aiStyleRules) {
+    finalSystem += '\n\nATURAN GAYA BAHASA DARI PENGGUNA (WAJIB DIIKUTI): ' + state.aiStyleRules;
+  }
+
+  return callProviderDirect(localKey, model, finalSystem, userPrompt);
 }
 
 // Bring-your-own-key direct call (no backend needed).
 async function callProviderDirect(apiKey: string, model: string, systemPrompt: string, userPrompt: string): Promise<string> {
+  // OpenRouter (free models) — uses OpenAI-compatible format
+  if (model.startsWith('openrouter/')) {
+    const realModel = model.replace('openrouter/', '');
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: realModel,
+        max_tokens: 4096,
+        temperature: 0.3,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+      }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const data = await res.json();
+    return data.choices[0].message.content;
+  }
+
   if (model.startsWith('claude')) {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const url = 'https://api.anthropic.com/v1/messages';
+    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+    const res = await fetch(proxyUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -161,7 +192,8 @@ async function callProviderDirect(apiKey: string, model: string, systemPrompt: s
   }
 
   if (model.startsWith('llama') || model.startsWith('mixtral')) {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const url = 'https://api.groq.com/openai/v1/chat/completions';
+    const opts = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
@@ -173,7 +205,21 @@ async function callProviderDirect(apiKey: string, model: string, systemPrompt: s
           { role: 'user', content: userPrompt },
         ],
       }),
-    });
+    };
+
+    let res;
+    try {
+      res = await fetch(url, opts);
+    } catch (err: any) {
+      if (err.name === 'TypeError' || err.message.includes('Network') || err.message.includes('fetch')) {
+        // Fallback to proxy if CORS/Adblock blocks it
+        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+        res = await fetch(proxyUrl, opts);
+      } else {
+        throw err;
+      }
+    }
+
     if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
     const data = await res.json();
     return data.choices[0].message.content;
@@ -211,6 +257,37 @@ async function sendAIQuestion(): Promise<void> {
     resp.classList.remove('streaming');
     resp.innerHTML = renderMarkdown(text);
     typeset(resp);
+
+    // Like/Dislike feedback
+    const fb = document.createElement('div');
+    fb.style.cssText = 'margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:8px;';
+    fb.innerHTML = `
+      <button class="btn ghost2 sm fb-like">Like</button>
+      <button class="btn ghost2 sm fb-dislike">Dislike</button>
+    `;
+    resp.appendChild(fb);
+
+    const btnLike = fb.querySelector('.fb-like') as HTMLButtonElement;
+    const btnDislike = fb.querySelector('.fb-dislike') as HTMLButtonElement;
+
+    btnLike.onclick = async () => {
+      btnLike.disabled = true;
+      btnDislike.style.display = 'none';
+      btnLike.textContent = 'Menyimpan...';
+      try {
+        const sysFb = 'Rangkum gaya penulisan, format, dan *tone* dari teks berikut ke dalam 1 kalimat instruksi singkat. JANGAN BAHAS MATERINYA. Berikan HANYA kalimat instruksi.';
+        const styleInfo = await callAITutor(sysFb, text);
+        state.aiStyleRules = styleInfo;
+        save();
+        btnLike.textContent = 'Preferensi Disimpan!';
+      } catch (e) {
+        btnLike.textContent = 'Gagal';
+      }
+    };
+    btnDislike.onclick = () => {
+      fb.innerHTML = '<span style="font-size:12px;color:var(--muted)">Diabaikan.</span>';
+    };
+
   } catch (err) {
     resp.classList.remove('streaming');
     resp.innerHTML = `<b>Error:</b> ${(err as Error).message}`;
@@ -315,6 +392,37 @@ export function setupAIHighlight(): void {
       content.className = 'ai-pop-content';
       content.innerHTML = renderMarkdown(ans);
       typeset(content);
+
+      // Like/Dislike feedback
+      const fb = document.createElement('div');
+      fb.style.cssText = 'margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:8px;';
+      fb.innerHTML = `
+        <button class="btn ghost2 sm fb-like">Like</button>
+        <button class="btn ghost2 sm fb-dislike">Dislike</button>
+      `;
+      content.appendChild(fb);
+
+      const btnLike = fb.querySelector('.fb-like') as HTMLButtonElement;
+      const btnDislike = fb.querySelector('.fb-dislike') as HTMLButtonElement;
+
+      btnLike.onclick = async () => {
+        btnLike.disabled = true;
+        btnDislike.style.display = 'none';
+        btnLike.textContent = 'Menyimpan...';
+        try {
+          const sysFb = 'Rangkum gaya penulisan, format, dan *tone* dari teks berikut ke dalam 1 kalimat instruksi singkat. JANGAN BAHAS MATERINYA. Berikan HANYA kalimat instruksi.';
+          const styleInfo = await callAITutor(sysFb, ans);
+          state.aiStyleRules = styleInfo;
+          save();
+          btnLike.textContent = 'Preferensi Disimpan!';
+        } catch (e) {
+          btnLike.textContent = 'Gagal';
+        }
+      };
+      btnDislike.onclick = () => {
+        fb.innerHTML = '<span style="font-size:12px;color:var(--muted)">Diabaikan.</span>';
+      };
+
       placePopover(); // re-clamp after the content height changes
     } catch (e) {
       content.className = 'ai-pop-content';
