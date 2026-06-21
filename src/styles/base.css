@@ -233,7 +233,7 @@ code {
 
 /* AI Highlight Explainer */
 #aiHighlightBtn {
-  position: absolute;
+  position: fixed;
   z-index: 9999;
   background: var(--primary);
   color: #fff;
@@ -252,12 +252,13 @@ code {
 #aiHighlightBtn:hover { transform: scale(1.05); }
 
 #aiPopover {
-  position: absolute;
+  position: fixed;
   z-index: 10000;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 12px;
-  width: 320px;
+  width: min(360px, calc(100vw - 24px));
+  max-height: min(80vh, 540px);
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   display: none;
   flex-direction: column;
@@ -272,6 +273,9 @@ code {
   align-items: center;
   font-weight: 600;
   font-size: 13px;
+  cursor: move;
+  user-select: none;
+  touch-action: none;
 }
 .ai-pop-close {
   background: transparent;
@@ -285,8 +289,10 @@ code {
   padding: 12px;
   font-size: 14px;
   line-height: 1.5;
-  max-height: 300px;
+  max-height: min(60vh, 440px);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  word-break: break-word;
 }
 .ai-pop-content.loading {
   color: var(--primary);

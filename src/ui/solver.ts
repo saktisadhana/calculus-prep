@@ -233,30 +233,32 @@ export function setupAIHighlight(): void {
   const popover = document.createElement('div');
   popover.id = 'aiPopover';
   popover.innerHTML = `
-    <div class="ai-pop-header">AI Explainer <button class="ai-pop-close">&times;</button></div>
+    <div class="ai-pop-header"><span>AI Explainer <span style="color:var(--muted);font-weight:400">· geser</span></span> <button class="ai-pop-close">&times;</button></div>
     <div class="ai-pop-content" id="aiPopContent"></div>
   `;
   document.body.appendChild(popover);
 
   let selectedText = '';
+  const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(v, hi));
 
   document.addEventListener('selectionchange', () => {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed) { btn.style.display = 'none'; return; }
     const text = sel.toString().trim();
-    if (text.length > 2) {
-      const range = sel.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-      const activeEl = document.activeElement;
-      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) return;
-      if (popover.contains(sel.anchorNode)) return;
-      selectedText = text;
-      btn.style.display = 'flex';
-      btn.style.top = `${window.scrollY + rect.top - 40}px`;
-      btn.style.left = `${window.scrollX + rect.left + rect.width / 2 - 45}px`;
-    } else {
-      btn.style.display = 'none';
-    }
+    if (text.length <= 2) { btn.style.display = 'none'; return; }
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) return;
+    if (popover.contains(sel.anchorNode)) return;
+    selectedText = text;
+
+    // Position the button near the selection, clamped to the viewport (fixed).
+    const rect = sel.getRangeAt(0).getBoundingClientRect();
+    btn.style.display = 'flex';
+    const bw = btn.offsetWidth || 150, bh = btn.offsetHeight || 34;
+    let top = rect.top - bh - 8;
+    if (top < 8) top = rect.bottom + 8; // flip below the selection if no room above
+    btn.style.left = `${clamp(rect.left + rect.width / 2 - bw / 2, 8, window.innerWidth - bw - 8)}px`;
+    btn.style.top = `${clamp(top, 8, window.innerHeight - bh - 8)}px`;
   });
 
   document.addEventListener('mousedown', (e) => {
@@ -267,11 +269,17 @@ export function setupAIHighlight(): void {
 
   popover.querySelector('.ai-pop-close')!.addEventListener('click', () => { popover.style.display = 'none'; });
 
+  // Keep the popover fully inside the viewport.
+  const placePopover = () => {
+    const pw = popover.offsetWidth || 340, ph = popover.offsetHeight || 200;
+    popover.style.left = `${clamp(parseInt(btn.style.left || '20') - 40, 8, window.innerWidth - pw - 8)}px`;
+    popover.style.top = `${clamp(parseInt(btn.style.top || '20') + 38, 8, window.innerHeight - ph - 8)}px`;
+  };
+
   btn.addEventListener('click', async () => {
     btn.style.display = 'none';
     popover.style.display = 'flex';
-    popover.style.top = `${parseInt(btn.style.top) + 40}px`;
-    popover.style.left = `${Math.max(10, parseInt(btn.style.left) - 100)}px`;
+    placePopover();
 
     const content = document.getElementById('aiPopContent')!;
     content.className = 'ai-pop-content loading';
@@ -283,9 +291,43 @@ export function setupAIHighlight(): void {
       content.className = 'ai-pop-content';
       content.innerHTML = ans.replace(/\n/g, '<br>');
       typeset(content);
+      placePopover(); // re-clamp after the content height changes
     } catch (e) {
       content.className = 'ai-pop-content';
       content.innerHTML = `<b>Gagal memanggil AI:</b> ${(e as Error).message}`;
     }
   });
+
+  // Drag the popover around by its header.
+  makeDraggable(popover, popover.querySelector('.ai-pop-header') as HTMLElement);
+}
+
+// Generic drag handler (mouse + touch), clamped to the viewport.
+function makeDraggable(panel: HTMLElement, handle: HTMLElement): void {
+  let dragging = false, startX = 0, startY = 0, originX = 0, originY = 0;
+
+  const begin = (target: EventTarget | null, cx: number, cy: number) => {
+    if ((target as HTMLElement)?.closest?.('.ai-pop-close')) return; // don't drag from the close button
+    dragging = true;
+    const r = panel.getBoundingClientRect();
+    originX = r.left; originY = r.top; startX = cx; startY = cy;
+    panel.style.left = `${originX}px`;
+    panel.style.top = `${originY}px`;
+    document.body.style.userSelect = 'none';
+  };
+  const moveTo = (cx: number, cy: number) => {
+    if (!dragging) return;
+    const pw = panel.offsetWidth, ph = panel.offsetHeight;
+    panel.style.left = `${Math.max(4, Math.min(originX + (cx - startX), window.innerWidth - pw - 4))}px`;
+    panel.style.top = `${Math.max(4, Math.min(originY + (cy - startY), window.innerHeight - ph - 4))}px`;
+  };
+  const end = () => { dragging = false; document.body.style.userSelect = ''; };
+
+  handle.addEventListener('mousedown', (e) => { begin(e.target, e.clientX, e.clientY); if (dragging) e.preventDefault(); });
+  window.addEventListener('mousemove', (e) => moveTo(e.clientX, e.clientY));
+  window.addEventListener('mouseup', end);
+
+  handle.addEventListener('touchstart', (e) => { const t = e.touches[0]; begin(e.target, t.clientX, t.clientY); }, { passive: true });
+  window.addEventListener('touchmove', (e) => { if (!dragging) return; e.preventDefault(); const t = e.touches[0]; moveTo(t.clientX, t.clientY); }, { passive: false });
+  window.addEventListener('touchend', end);
 }

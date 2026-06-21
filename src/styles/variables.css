@@ -28,6 +28,9 @@
   --hdr2: #151b2e;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   --glow: 0 0 20px rgba(56, 189, 248, 0.08);
+  /* Aliases used by some components */
+  --primary: var(--acc);
+  --success: var(--ok);
 
   /* Spacing scale */
   --s1: 4px;
