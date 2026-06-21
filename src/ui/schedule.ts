@@ -583,31 +583,54 @@ function applyAISchedule(blocks: any[], startTime: string): void {
 
 async function buildScheduleWithAI(): Promise<void> {
   const reqEl = document.getElementById('aiSchedReq') as HTMLTextAreaElement | null;
-  const startEl = document.getElementById('aiSchedStart') as HTMLInputElement | null;
   const statusEl = document.getElementById('aiSchedStatus');
   const btn = document.getElementById('aiSchedBtn') as HTMLButtonElement | null;
   if (!reqEl || !statusEl) return;
 
+  // Pull constraints from the shared settings form, persist them, then let the
+  // AI plan within those limits. The free-text box only adds topic intent.
+  const d = readPomForm();
+  savePomSettings(d);
+  const startTime = d.startTime || nowHM();
   const req = reqEl.value.trim();
-  if (!req) { statusEl.textContent = 'Tulis dulu apa yang kamu mau (topik, total waktu, durasi sesi).'; statusEl.className = 'status'; return; }
-  const startTime = (startEl && startEl.value) || nowHM();
+
+  const toMin = (hm: string) => { const [h, m] = (hm || '0:0').split(':').map(Number); return (h || 0) * 60 + (m || 0); };
+  let avail = toMin(d.bedTime) - toMin(startTime);
+  if (avail <= 0) avail += 24 * 60;
+  let busyMin = 0;
+  if (d.busyStart && d.busyEnd) {
+    let bs = toMin(d.busyStart); let be = toMin(d.busyEnd);
+    if (be < bs) be += 24 * 60;
+    busyMin = Math.max(0, be - bs);
+  }
+  const availMins = Math.max(0, avail - busyMin);
 
   statusEl.textContent = 'AI sedang menyusun jadwal...';
   statusEl.className = 'status';
   if (btn) btn.disabled = true;
 
-  const system = `Kamu perencana jadwal belajar Kalkulus 2. Susun rangkaian sesi belajar dari permintaan siswa.
+  const system = `Kamu perencana jadwal belajar Kalkulus 2. Susun rangkaian sesi belajar memakai batasan dari pengaturan siswa.
 Topik valid: BAB 4 (4.1 Luas antar kurva, 4.2 Volume benda putar, 4.3 Panjang kurva, 4.4 Luas permukaan, 4.5 Titik berat), BAB 5 (5.1 Parametrik, 5.2 Koordinat kutub, 5.3 Grafik kutub, 5.4 Luas kutub, 5.5 Garis singgung & busur kutub), BAB 6 (6.1 Barisan, 6.2 Deret, 6.3 Uji konvergensi, 6.4 Deret pangkat & Taylor, 6.5 Diferensiasi & integrasi deret).
 Aturan WAJIB:
-- Total durasi semua block (fokus + istirahat) TIDAK BOLEH melebihi total waktu yang dimiliki siswa.
-- Hormati durasi sesi fokus maksimal. Pecah satu topik jadi beberapa sesi fokus bila perlu.
-- Sisipkan istirahat singkat (5-10 mnt) antar sesi fokus hanya jika sisa waktu cukup; utamakan waktu untuk fokus.
+- Total durasi semua block (fokus + istirahat) TIDAK BOLEH melebihi total waktu tersedia.
+- Hormati durasi sesi fokus MAKSIMAL. Pecah satu topik jadi beberapa sesi fokus bila perlu.
+- Pakai durasi istirahat yang diberikan; sisipkan istirahat antar sesi fokus hanya jika sisa waktu cukup.
+- Hindari menjadwalkan fokus pada rentang waktu sibuk.
+- Jika siswa menyebut total waktu berbeda di permintaannya, total dari siswa yang dipakai (timpa perkiraan).
 - Ikuti urutan/topik yang diminta; jika tak disebut, pilih yang masuk akal (utamakan BAB 4 & 6).
 - desc tiap block singkat dan sebut nomor subbab, mis. "6.1 Barisan tak hingga".
 Balas HANYA JSON valid tanpa teks lain dan tanpa code fence:
 {"blocks":[{"type":"focus","minutes":30,"desc":"6.1 Barisan tak hingga"},{"type":"break","minutes":5,"desc":"Istirahat"}],"note":"satu kalimat ringkas"}`;
 
-  const userPrompt = `Permintaan siswa: """${req}"""\nWaktu mulai: ${startTime}. Buat jadwalnya sekarang.`;
+  const constraints = [
+    `Waktu mulai: ${startTime}.`,
+    `Target tidur: ${d.bedTime} (perkiraan total tersedia ${availMins} menit).`,
+    `Durasi sesi fokus maksimal: ${d.focusMin} menit.`,
+    `Istirahat antar sesi: ${d.breakMin} menit; istirahat panjang ${d.longBreakMin} menit tiap ${d.sessionsBeforeLong} sesi.`,
+    (d.busyStart && d.busyEnd) ? `Waktu sibuk (hindari): ${d.busyStart}-${d.busyEnd}${d.busyLabel ? ' (' + d.busyLabel + ')' : ''}.` : '',
+  ].filter(Boolean).join('\n');
+
+  const userPrompt = `Batasan dari pengaturan:\n${constraints}\n\nPermintaan siswa (boleh menimpa total waktu): """${req || '(tidak ada permintaan khusus; pilih topik penting, utamakan BAB 4 & 6)'}"""\n\nBuat jadwalnya sekarang.`;
 
   try {
     const raw = await callAITutor(system, userPrompt);
@@ -668,23 +691,12 @@ export function renderSchedule(): void {
       </div>
     </div>
 
-    <div class="card" style="border-left:4px solid var(--acc2)">
-      <h3 style="margin-top:4px">Buat jadwal dengan AI</h3>
-      <p class="muted" style="margin-top:0;font-size:13px">Tulis maumu dengan bahasa biasa, AI langsung menyusun sesi fokus + istirahat sesuai waktu dan topik yang kamu sebut. Contoh: <i>"Fokus 6.1, 4.2, 4.3. Aku cuma punya 100 menit, sesi fokus maksimal 30 menit."</i></p>
-      <div class="field"><textarea class="fld" id="aiSchedReq" style="min-height:64px" placeholder="mis. Fokus bab 6.1, 4.2, dan 4.3. Aku punya 100 menit, maksimal fokus 30 menit per sesi."></textarea></div>
-      <div class="row">
-        <div class="field" style="max-width:150px"><label>Mulai jam</label><input class="fld" type="time" id="aiSchedStart" value="${nowHM()}"></div>
-        <div class="field" style="flex:0 0 auto"><label>&nbsp;</label><button class="btn" id="aiSchedBtn">Buat dengan AI</button></div>
-      </div>
-      <div class="status" id="aiSchedStatus"></div>
-    </div>
-
     <div class="card">
-      <h3 style="margin-top:4px">Atau atur manual</h3>
+      <h3 style="margin-top:4px">Atur &amp; buat jadwal</h3>
       <div class="grid g3" style="gap:10px">
         <div class="field"><label>Mulai belajar</label><input class="fld" type="time" id="pomStartTime" value="${d.startTime}"></div>
         <div class="field"><label>Target tidur</label><input class="fld" type="time" id="pomBedTime" value="${d.bedTime || '01:00'}"></div>
-        <div class="field"><label>Fokus (menit)</label><input class="fld" type="number" id="pomFocusMin" value="${d.focusMin}" min="10" max="90"></div>
+        <div class="field"><label>Fokus maks (menit)</label><input class="fld" type="number" id="pomFocusMin" value="${d.focusMin}" min="10" max="90"></div>
       </div>
       <div class="grid g3" style="gap:10px;margin-top:10px">
         <div class="field"><label>Istirahat (menit)</label><input class="fld" type="number" id="pomBreakMin" value="${d.breakMin}" min="1" max="30"></div>
@@ -693,17 +705,23 @@ export function renderSchedule(): void {
       </div>
 
       <h4 style="margin-top:18px">Waktu sibuk / istirahat wajib (opsional)</h4>
-      <p class="muted" style="margin-top:0;font-size:13px">Misal: makan siang, sholat, kegiatan lain. Jadwal otomatis akan melewati waktu ini.</p>
+      <p class="muted" style="margin-top:0;font-size:13px">Misal: makan siang, sholat, kegiatan lain. Kedua mode jadwal akan melewati waktu ini.</p>
       <div class="grid g3" style="gap:10px">
         <div class="field"><label>Mulai sibuk</label><input class="fld" type="time" id="pomBusyStart" value="${d.busyStart}"></div>
         <div class="field"><label>Selesai sibuk</label><input class="fld" type="time" id="pomBusyEnd" value="${d.busyEnd}"></div>
         <div class="field"><label>Keterangan</label><input class="fld" type="text" id="pomBusyLabel" value="${d.busyLabel}" placeholder="mis. Makan siang"></div>
       </div>
 
+      <h4 style="margin-top:18px">Fokus pada topik (opsional, untuk mode AI)</h4>
+      <p class="muted" style="margin-top:0;font-size:13px">Sebutkan subbab atau permintaan khusus dengan bahasa biasa. AI memakai pengaturan di atas (mulai, fokus maks, istirahat, waktu sibuk) sebagai batasan. Contoh: <i>"Fokus 6.1, 4.2, 4.3. Aku cuma punya 100 menit."</i></p>
+      <div class="field"><textarea class="fld" id="aiSchedReq" style="min-height:60px" placeholder="mis. Fokus bab 6.1, 4.2, dan 4.3. Aku punya 100 menit."></textarea></div>
+
       <div class="row" style="margin-top:14px">
-        <button class="btn" id="pomGenerate">Buat jadwal</button>
+        <button class="btn" id="aiSchedBtn">Buat dengan AI</button>
+        <button class="btn ghost" id="pomGenerate">Buat otomatis (template)</button>
         <button class="btn ghost sm" id="pomSaveSettings">Simpan pengaturan</button>
       </div>
+      <div class="status" id="aiSchedStatus" style="margin-top:8px"></div>
     </div>
 
     <div class="card">
