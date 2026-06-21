@@ -123,24 +123,17 @@ export function renderSolver(): void {
 // Fallback: if the user pasted their own key in Settings, call the provider
 // directly from the browser (supports Gemini, Claude, and Groq models).
 async function callAITutor(systemPrompt: string, userPrompt: string): Promise<string> {
-  const localKey = (localStorage.getItem('kalk2_ai_backend') || '').trim();
-  const model = localStorage.getItem('kalk2_ai_model') || 'gemini-1.5-flash';
+  let localKey = (localStorage.getItem('kalk2_ai_backend') || '').trim();
+  let model = localStorage.getItem('kalk2_ai_model') || 'gemini-1.5-flash';
 
-  if (localKey) return callProviderDirect(localKey, model, systemPrompt, userPrompt);
-
-  const res = await fetch('/api/ai', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ system: systemPrompt, prompt: userPrompt, model }),
-  });
-  if (!res.ok) {
-    let msg = `HTTP ${res.status}`;
-    try { const j = await res.json(); if (j?.error) msg = j.error; } catch { /* noop */ }
-    if (res.status === 404) msg = 'Backend AI (/api/ai) tidak ditemukan. Deploy ke Vercel dengan GEMINI_API_KEY, atau isi API key sendiri di Pengaturan.';
-    throw new Error(msg);
+  if (!localKey) {
+    localKey = 'AIzaSyAj_UbbGOQrqo8kK6Pr9Bxbwm6AFDqpMH0';
+    if (!localStorage.getItem('kalk2_ai_model')) {
+      model = 'gemini-1.5-flash';
+    }
   }
-  const data = await res.json();
-  return data.text as string;
+
+  return callProviderDirect(localKey, model, systemPrompt, userPrompt);
 }
 
 // Bring-your-own-key direct call (no backend needed).
@@ -242,15 +235,45 @@ export function setupAIHighlight(): void {
   let selectedText = '';
   const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(v, hi));
 
+  function extractSelectionTextWithMath(sel: Selection): string {
+    if (!sel || sel.rangeCount === 0) return '';
+    const frag = sel.getRangeAt(0).cloneContents();
+    const div = document.createElement('div');
+    div.appendChild(frag);
+
+    const mathEls = div.querySelectorAll('mjx-container');
+    mathEls.forEach(el => {
+      const tex = el.getAttribute('data-tex');
+      if (tex) {
+        const isBlock = el.getAttribute('data-display') === 'true' || el.hasAttribute('display');
+        const wrapper = document.createTextNode(isBlock ? `$$${tex}$$` : `$${tex}$`);
+        el.replaceWith(wrapper);
+      }
+    });
+
+    div.style.position = 'absolute';
+    div.style.left = '-9999px';
+    document.body.appendChild(div);
+    const text = div.innerText || div.textContent || '';
+    document.body.removeChild(div);
+    return text.trim();
+  }
+
   document.addEventListener('selectionchange', () => {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed) { btn.style.display = 'none'; return; }
-    const text = sel.toString().trim();
-    if (text.length <= 2) { btn.style.display = 'none'; return; }
+    
+    // Use our custom extractor to get LaTeX instead of blank spaces
+    const text = extractSelectionTextWithMath(sel);
+    // Fallback to native toString to detect if we actually highlighted something visible
+    const rawText = sel.toString().trim();
+    
+    if (rawText.length <= 2 && text.length <= 2) { btn.style.display = 'none'; return; }
+    
     const activeEl = document.activeElement;
     if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) return;
     if (popover.contains(sel.anchorNode)) return;
-    selectedText = text;
+    selectedText = text || rawText;
 
     // Position the button near the selection, clamped to the viewport (fixed).
     const rect = sel.getRangeAt(0).getBoundingClientRect();

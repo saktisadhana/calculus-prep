@@ -71,6 +71,7 @@ let pomMode: PomMode = state.pomSavedState?.mode || 'idle';
 let pomSchedule: PomBlock[] = state.pomSavedState?.schedule || [];
 let pomSessionIndex = state.pomSavedState?.sessionIndex || 0;
 let pomTotalFocus = state.pomSavedState?.totalFocus || 0; // total focus seconds this run
+let lastTickTime = Date.now();
 
 function persistPomState(): void {
   state.pomSavedState = {
@@ -233,14 +234,22 @@ function advancePomodoro(): void {
 }
 
 function pomTick(): void {
+  const now = Date.now();
+  const deltaSec = Math.floor((now - lastTickTime) / 1000);
+  if (deltaSec < 1) return;
+  lastTickTime += deltaSec * 1000;
+
+  const focusAdded = Math.min(deltaSec, pomRemaining);
+  pomRemaining -= deltaSec;
+  if (pomMode === 'focus') pomTotalFocus += focusAdded;
+
   if (pomRemaining <= 0) {
+    pomRemaining = 0;
     playAlarm();
     advancePomodoro();
     updatePomUI();
     return;
   }
-  pomRemaining--;
-  if (pomMode === 'focus') pomTotalFocus++;
   updatePomUI();
 }
 
@@ -298,6 +307,7 @@ function pomStart(): void {
   }
   if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
   getAudioCtx().resume();
+  lastTickTime = Date.now();
   if (pomTimer) clearInterval(pomTimer);
   pomTimer = setInterval(pomTick, 1000);
   updatePomUI();
@@ -338,6 +348,7 @@ function pomBusy(): void {
   const busyMin = parseInt((document.getElementById('pomBusyDuration') as HTMLInputElement)?.value) || 30;
   pomRemaining = busyMin * 60;
   updatePomUI();
+  lastTickTime = Date.now();
   if (!pomTimer) pomTimer = setInterval(pomTick, 1000);
   persistPomState();
 }
@@ -363,6 +374,7 @@ function pomSyncTime(): void {
     updatePomUI();
     if (!pomTimer) {
       getAudioCtx().resume();
+      lastTickTime = Date.now();
       pomTimer = setInterval(pomTick, 1000);
       const startBtn = document.getElementById('pomStart');
       if (startBtn) startBtn.textContent = 'Berjalan...';
