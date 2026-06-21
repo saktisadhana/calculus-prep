@@ -4,7 +4,7 @@ const path = require('path');
 
 const PORT = 4178;
 const ROOT = path.resolve(__dirname, '..');
-const DEFAULT = 'Persiapan-Kalkulus-2.html';
+const DEFAULT = 'index.html';
 
 const types = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json' };
 
