@@ -5,6 +5,7 @@ import { state, save } from '../storage/state.ts';
 import { activeProfile, parseExam } from '../storage/profiles.ts';
 import { studyDay, examDay } from '../data/schedule.ts';
 import { updateStats } from './stats.ts';
+import { callAITutor } from './solver.ts';
 import { pad2, dfmt } from '../util.ts';
 
 // ===================================================================
@@ -528,6 +529,105 @@ function renderExamTL(): string {
 }
 
 // ===================================================================
+//  AI SCHEDULER - natural language -> Pomodoro plan
+// ===================================================================
+function nowHM(): string {
+  const n = new Date();
+  return `${pad2(n.getHours())}:${pad2(n.getMinutes())}`;
+}
+
+function parseScheduleJSON(raw: string): any {
+  if (!raw) return null;
+  const s = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+  const start = s.indexOf('{');
+  const end = s.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  try { return JSON.parse(s.slice(start, end + 1)); } catch { return null; }
+}
+
+// Convert AI block list -> pomSchedule with real clock times, then render.
+function applyAISchedule(blocks: any[], startTime: string): void {
+  const esc = (x: string) => x.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const fmtTime = (m: number) => `${pad2(Math.floor(m / 60) % 24)}:${pad2(m % 60)}`;
+  const [sh, sm] = (startTime || nowHM()).split(':').map(Number);
+  let cursor = (sh || 0) * 60 + (sm || 0);
+
+  pomSchedule = [];
+  let focusCount = 0;
+  for (const b of blocks) {
+    const mins = Math.max(1, Math.min(180, Math.round(Number(b && b.minutes) || 0)));
+    if (!mins) continue;
+    const t = String((b && b.type) || 'focus').toLowerCase();
+    const type: PomMode = t.startsWith('long') ? 'longbreak'
+      : (t.startsWith('break') || t.startsWith('istir')) ? 'break'
+      : 'focus';
+    const end = cursor + mins;
+    const desc = esc(String((b && b.desc) || (type === 'focus' ? 'Fokus belajar' : 'Istirahat')).slice(0, 120));
+    const block: PomBlock = { type, duration: mins, time: `${fmtTime(cursor)}–${fmtTime(end)}`, desc };
+    if (type === 'focus') { block.k = 'ai' + focusCount; focusCount++; }
+    pomSchedule.push(block);
+    cursor = end;
+  }
+
+  pomSessionIndex = 0;
+  pomRemaining = 0;
+  pomMode = 'idle';
+  persistPomState();
+
+  const tl = document.getElementById('pomTimeline');
+  if (tl) tl.innerHTML = generateTimelineFromExisting();
+  updatePomUI();
+  const startBtn = document.getElementById('pomStart');
+  if (startBtn) startBtn.textContent = 'Mulai';
+}
+
+async function buildScheduleWithAI(): Promise<void> {
+  const reqEl = document.getElementById('aiSchedReq') as HTMLTextAreaElement | null;
+  const startEl = document.getElementById('aiSchedStart') as HTMLInputElement | null;
+  const statusEl = document.getElementById('aiSchedStatus');
+  const btn = document.getElementById('aiSchedBtn') as HTMLButtonElement | null;
+  if (!reqEl || !statusEl) return;
+
+  const req = reqEl.value.trim();
+  if (!req) { statusEl.textContent = 'Tulis dulu apa yang kamu mau (topik, total waktu, durasi sesi).'; statusEl.className = 'status'; return; }
+  const startTime = (startEl && startEl.value) || nowHM();
+
+  statusEl.textContent = 'AI sedang menyusun jadwal...';
+  statusEl.className = 'status';
+  if (btn) btn.disabled = true;
+
+  const system = `Kamu perencana jadwal belajar Kalkulus 2. Susun rangkaian sesi belajar dari permintaan siswa.
+Topik valid: BAB 4 (4.1 Luas antar kurva, 4.2 Volume benda putar, 4.3 Panjang kurva, 4.4 Luas permukaan, 4.5 Titik berat), BAB 5 (5.1 Parametrik, 5.2 Koordinat kutub, 5.3 Grafik kutub, 5.4 Luas kutub, 5.5 Garis singgung & busur kutub), BAB 6 (6.1 Barisan, 6.2 Deret, 6.3 Uji konvergensi, 6.4 Deret pangkat & Taylor, 6.5 Diferensiasi & integrasi deret).
+Aturan WAJIB:
+- Total durasi semua block (fokus + istirahat) TIDAK BOLEH melebihi total waktu yang dimiliki siswa.
+- Hormati durasi sesi fokus maksimal. Pecah satu topik jadi beberapa sesi fokus bila perlu.
+- Sisipkan istirahat singkat (5-10 mnt) antar sesi fokus hanya jika sisa waktu cukup; utamakan waktu untuk fokus.
+- Ikuti urutan/topik yang diminta; jika tak disebut, pilih yang masuk akal (utamakan BAB 4 & 6).
+- desc tiap block singkat dan sebut nomor subbab, mis. "6.1 Barisan tak hingga".
+Balas HANYA JSON valid tanpa teks lain dan tanpa code fence:
+{"blocks":[{"type":"focus","minutes":30,"desc":"6.1 Barisan tak hingga"},{"type":"break","minutes":5,"desc":"Istirahat"}],"note":"satu kalimat ringkas"}`;
+
+  const userPrompt = `Permintaan siswa: """${req}"""\nWaktu mulai: ${startTime}. Buat jadwalnya sekarang.`;
+
+  try {
+    const raw = await callAITutor(system, userPrompt);
+    const parsed = parseScheduleJSON(raw);
+    if (!parsed || !Array.isArray(parsed.blocks) || parsed.blocks.length === 0) {
+      throw new Error('AI tidak mengembalikan jadwal yang valid. Coba lagi atau perjelas permintaanmu.');
+    }
+    applyAISchedule(parsed.blocks, startTime);
+    const focusN = parsed.blocks.filter((b: any) => String((b && b.type) || 'focus').toLowerCase().startsWith('foc')).length;
+    statusEl.className = 'status ok';
+    statusEl.textContent = `Jadwal dibuat (${focusN} sesi fokus).${parsed.note ? ' ' + parsed.note : ''} Tekan "Mulai" pada timer di atas.`;
+  } catch (e) {
+    statusEl.className = 'status err';
+    statusEl.textContent = 'Gagal membuat jadwal: ' + (e as Error).message;
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ===================================================================
 //  RENDER
 // ===================================================================
 export function renderSchedule(): void {
@@ -568,8 +668,19 @@ export function renderSchedule(): void {
       </div>
     </div>
 
+    <div class="card" style="border-left:4px solid var(--acc2)">
+      <h3 style="margin-top:4px">Buat jadwal dengan AI</h3>
+      <p class="muted" style="margin-top:0;font-size:13px">Tulis maumu dengan bahasa biasa, AI langsung menyusun sesi fokus + istirahat sesuai waktu dan topik yang kamu sebut. Contoh: <i>"Fokus 6.1, 4.2, 4.3. Aku cuma punya 100 menit, sesi fokus maksimal 30 menit."</i></p>
+      <div class="field"><textarea class="fld" id="aiSchedReq" style="min-height:64px" placeholder="mis. Fokus bab 6.1, 4.2, dan 4.3. Aku punya 100 menit, maksimal fokus 30 menit per sesi."></textarea></div>
+      <div class="row">
+        <div class="field" style="max-width:150px"><label>Mulai jam</label><input class="fld" type="time" id="aiSchedStart" value="${nowHM()}"></div>
+        <div class="field" style="flex:0 0 auto"><label>&nbsp;</label><button class="btn" id="aiSchedBtn">Buat dengan AI</button></div>
+      </div>
+      <div class="status" id="aiSchedStatus"></div>
+    </div>
+
     <div class="card">
-      <h3 style="margin-top:4px">Pengaturan jadwal</h3>
+      <h3 style="margin-top:4px">Atau atur manual</h3>
       <div class="grid g3" style="gap:10px">
         <div class="field"><label>Mulai belajar</label><input class="fld" type="time" id="pomStartTime" value="${d.startTime}"></div>
         <div class="field"><label>Target tidur</label><input class="fld" type="time" id="pomBedTime" value="${d.bedTime || '01:00'}"></div>
@@ -642,6 +753,8 @@ export function renderSchedule(): void {
     btn.textContent = 'Tersimpan!';
     setTimeout(() => btn.textContent = 'Simpan pengaturan', 1500);
   };
+
+  document.getElementById('aiSchedBtn')!.onclick = () => buildScheduleWithAI();
 
   if (pomSchedule.length > 0) {
     document.getElementById('pomTimeline')!.innerHTML = generateTimelineFromExisting();
