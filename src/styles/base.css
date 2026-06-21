@@ -222,3 +222,65 @@ code {
   color: var(--codeink);
   font-size: 0.9em;
 }
+
+/* AI Highlight Explainer */
+#aiHighlightBtn {
+  position: absolute;
+  z-index: 9999;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: none;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.1s, opacity 0.1s;
+}
+#aiHighlightBtn:hover { transform: scale(1.05); }
+
+#aiPopover {
+  position: absolute;
+  z-index: 10000;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.ai-pop-header {
+  background: var(--panel2);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 13px;
+}
+.ai-pop-close {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+}
+.ai-pop-close:hover { color: var(--ink); }
+.ai-pop-content {
+  padding: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.ai-pop-content.loading {
+  color: var(--primary);
+  font-style: italic;
+}
