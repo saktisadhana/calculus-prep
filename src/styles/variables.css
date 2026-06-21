@@ -1,0 +1,80 @@
+/* =============================================
+   THEME TOKENS — Dark (default) & Light
+   ============================================= */
+:root {
+  /* Dark theme (default) */
+  --bg: #0b0f1a;
+  --panel: #151b2e;
+  --panel2: #1c2540;
+  --ink: #e2e8f0;
+  --muted: #8895ad;
+  --acc: #38bdf8;
+  --acc2: #a78bfa;
+  --acc3: #34d399;
+  --ok: #22c55e;
+  --warn: #f59e0b;
+  --bad: #ef4444;
+  --line: #253150;
+  --inset: #080c16;
+  --formbg: #0d1220;
+  --ansbg: #0d1220;
+  --tipbg: #0b1e2b;
+  --tipln: #1a4a66;
+  --warnbg: #1f1505;
+  --warnln: #5c3d10;
+  --code: #0d1220;
+  --codeink: #fbbf24;
+  --hdr1: #0b0f1a;
+  --hdr2: #151b2e;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --glow: 0 0 20px rgba(56, 189, 248, 0.08);
+
+  /* Spacing scale */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 20px;
+  --s6: 24px;
+  --s8: 32px;
+
+  /* Radii */
+  --r1: 6px;
+  --r2: 10px;
+  --r3: 14px;
+  --r4: 20px;
+  --rpill: 999px;
+
+  /* Transitions */
+  --fast: 0.15s ease;
+  --med: 0.25s ease;
+  --slow: 0.4s ease;
+}
+
+:root[data-theme="light"] {
+  --bg: #f4f6fb;
+  --panel: #ffffff;
+  --panel2: #edf1f7;
+  --ink: #0f172a;
+  --muted: #5b6b82;
+  --acc: #0284c7;
+  --acc2: #7c3aed;
+  --acc3: #059669;
+  --ok: #16a34a;
+  --warn: #b45309;
+  --bad: #dc2626;
+  --line: #d5dde8;
+  --inset: #edf1f7;
+  --formbg: #f0f4f9;
+  --ansbg: #f0f4f9;
+  --tipbg: #ecfeff;
+  --tipln: #a5d8e6;
+  --warnbg: #fffbeb;
+  --warnln: #f1d18a;
+  --code: #edf1f7;
+  --codeink: #b45309;
+  --hdr1: #ffffff;
+  --hdr2: #f4f6fb;
+  --shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  --glow: none;
+}

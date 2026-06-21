@@ -1,0 +1,31 @@
+/* =============================================
+   RESPONSIVE — Mobile Breakpoints
+   ============================================= */
+
+@media (max-width: 768px) {
+  h1 { font-size: 16px; }
+  h2 { font-size: 19px; }
+  .big { font-size: 26px; }
+  .profsel { max-width: 140px; }
+  main { padding: 16px 14px 60px; }
+  nav { gap: 4px; }
+  nav button { padding: 6px 10px; font-size: 12px; }
+  .card { padding: 14px 16px; }
+  .timerbar .clk { font-size: 22px; }
+  .drill-timer { font-size: 36px; }
+  .drill-choices { grid-template-columns: 1fr; }
+  .flashcard { min-height: 180px; }
+  .fc-options { flex-direction: column; align-items: center; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 14px; }
+  .hright { gap: 6px; }
+  .countdown { padding: 6px 10px; font-size: 12px; }
+  .countdown b { font-size: 14px; }
+  .profsel { max-width: 110px; font-size: 12px; }
+  .row { flex-direction: column; }
+  .row > .field { min-width: 100%; }
+  .q { padding: 12px 14px; }
+  .flashcard .fc-content { font-size: 14px; }
+}

@@ -1,0 +1,224 @@
+/* =============================================
+   BASE — Reset, Typography, Core Layout
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Header */
+header {
+  position: sticky;
+  top: 10px;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--line);
+  padding: 12px 18px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px;
+  margin: 0 10px 20px 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+@media (prefers-color-scheme: dark) {
+  header {
+    background: rgba(15, 23, 42, 0.75);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+}
+[data-theme="dark"] header {
+  background: rgba(15, 23, 42, 0.75);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+.htop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+h1 {
+  font-size: 20px;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-icon {
+  background: linear-gradient(135deg, var(--acc), var(--acc2));
+  color: white;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 900;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.4);
+}
+h1 span:not(.logo-icon) { color: var(--acc); }
+
+.hright {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.profsel {
+  background: var(--panel2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  padding: 7px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  max-width: 190px;
+  transition: border-color var(--fast);
+}
+.profsel:hover { border-color: var(--acc); }
+
+.countdown {
+  background: var(--inset);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  padding: 8px 14px;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+.countdown b {
+  color: var(--warn);
+  font-size: 16px;
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  gap: 6px;
+  margin-top: 14px;
+  overflow-x: auto;
+  padding-bottom: 4px; /* for scrollbar */
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+nav::-webkit-scrollbar {
+  height: 4px;
+}
+nav::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+
+nav button {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid transparent;
+  padding: 6px 14px;
+  border-radius: var(--rpill);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all var(--fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+nav button:hover {
+  color: var(--ink);
+  background: var(--panel);
+}
+nav button.active {
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 700;
+}
+
+/* Main */
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+/* Sections */
+section {
+  display: none;
+  animation: fadeUp 0.3s ease;
+}
+section.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typography */
+h2 {
+  color: var(--acc);
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 10px;
+  margin-top: 8px;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  color: var(--acc2);
+  margin-top: 28px;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+h4 {
+  margin: 20px 0 8px;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+p { margin: 8px 0; }
+
+ul {
+  margin: 8px 0 8px 4px;
+  padding-left: 22px;
+}
+li { margin: 5px 0; }
+
+a { color: var(--acc); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.muted { color: var(--muted); }
+.big {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--acc);
+  letter-spacing: -0.02em;
+}
+
+code {
+  background: var(--code);
+  padding: 2px 7px;
+  border-radius: 5px;
+  color: var(--codeink);
+  font-size: 0.9em;
+}
