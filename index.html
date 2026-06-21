@@ -126,6 +126,21 @@
   .plist .pn{font-weight:600}
   .plist .pcur{font-size:11px;color:var(--ok);border:1px solid var(--ok);border-radius:999px;padding:1px 8px}
   .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  /* Formula explanations, prerequisites, solver */
+  .fwrap{position:relative}
+  .formula[data-fx]{cursor:help}
+  .fexp{display:none;font-size:13px;color:var(--muted);background:var(--ansbg);border:1px dashed var(--line);border-radius:8px;padding:8px 12px;margin:-2px 0 10px}
+  .fwrap:hover .fexp,.fwrap.show .fexp{display:block}
+  .fhint{font-size:11px;color:var(--muted);font-style:italic}
+  .prereq{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;background:var(--tipbg);border:1px solid var(--tipln);border-radius:8px;padding:7px 12px;margin:10px 0;font-size:13px}
+  .preref{color:var(--acc);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+  .preref:hover{filter:brightness(1.15)}
+  .presub{scroll-margin-top:120px;border-radius:8px;padding:4px 8px;margin:4px -8px;transition:background .3s,box-shadow .3s}
+  .presub.prehit{background:rgba(56,189,248,.16);box-shadow:0 0 0 2px var(--acc) inset}
+  .presub h4{margin-top:14px}
+  .genq{background:var(--formbg);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .step{border-left:3px solid var(--acc2);background:var(--ansbg);border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0}
+  .step .tag{color:var(--acc2)}
   @media(max-width:600px){h1{font-size:15px}.big{font-size:24px}.profsel{max-width:130px}}
 </style>
 </head>
@@ -141,9 +156,11 @@
   <nav id="nav">
     <button data-t="dash" class="active">Dashboard</button>
     <button data-t="jadwal">Jadwal</button>
+    <button data-t="prasyarat">Prasyarat</button>
     <button data-t="materi">Ringkasan Materi</button>
     <button data-t="rumus">Lembar Rumus</button>
     <button data-t="latihan">Latihan Soal</button>
+    <button data-t="solver">Soal Solver</button>
     <button data-t="mock">Mock Exam</button>
     <button data-t="tolakukur">Tolak Ukur</button>
     <button data-t="pengaturan">Pengaturan</button>
@@ -215,10 +232,72 @@
   <div class="warnbox"><span class="tag">Aturan emas</span><br>Tidur minimal 6 sampai 7 jam. Otak mengonsolidasi memori saat tidur — begadang penuh justru menurunkan skor. Berhenti belajar maksimal jam 23:00.</div>
 </section>
 
+<!-- ============ PRASYARAT (BAB 1-3) ============ -->
+<section id="prasyarat">
+  <h2>Prasyarat — Bab 1, 2, 3</h2>
+  <p class="muted">Bab 4–6 dibangun di atas Bab 1–3. Bila lupa asal sebuah teknik, lihat ringkasan di sini. Nomor &amp; halaman mengikuti Daftar Isi buku. Chip <b>Prasyarat</b> di Ringkasan Materi &amp; Soal Solver akan melompat ke subbab yang relevan di halaman ini.</p>
+
+  <div class="card">
+    <h3 style="margin-top:4px">Bab 1 — Fungsi Transenden <span class="muted" style="font-size:13px">(hlm. 1)</span></h3>
+    <div id="pre-1-1" class="presub">
+      <h4>1.1 Fungsi Eksponensial dan Logaritma (hlm. 1)</h4>
+      <div class="formula">$$\frac{d}{dx}e^x=e^x,\quad \int e^x dx=e^x+C,\quad \frac{d}{dx}\ln x=\frac1x,\quad \int\frac{dx}{x}=\ln|x|+C$$</div>
+      <p class="muted">Juga $\frac{d}{dx}a^x=a^x\ln a$ dan $\int a^x dx=\dfrac{a^x}{\ln a}+C$. Mendasari deret Taylor $e^x$ dan banyak integral di Bab 2–6.</p>
+    </div>
+    <div id="pre-1-2" class="presub">
+      <h4>1.2 Fungsi Invers Trigonometri (hlm. 33)</h4>
+      <div class="formula">$$\frac{d}{dx}\arcsin x=\frac{1}{\sqrt{1-x^2}},\qquad \frac{d}{dx}\arctan x=\frac{1}{1+x^2}$$</div>
+      <div class="formula">$$\int\frac{dx}{\sqrt{a^2-x^2}}=\arcsin\frac xa+C,\qquad \int\frac{dx}{a^2+x^2}=\frac1a\arctan\frac xa+C$$</div>
+    </div>
+    <div id="pre-1-3" class="presub">
+      <h4>1.3 Fungsi Hiperbolik (hlm. 54)</h4>
+      <div class="formula">$$\sinh x=\frac{e^x-e^{-x}}{2},\quad \cosh x=\frac{e^x+e^{-x}}{2},\quad \cosh^2x-\sinh^2x=1$$</div>
+      <p class="muted">$\frac{d}{dx}\sinh x=\cosh x$, $\frac{d}{dx}\cosh x=\sinh x$, $\int\sinh x\,dx=\cosh x+C$.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:4px">Bab 2 — Teknik Integrasi <span class="muted" style="font-size:13px">(hlm. 69)</span></h3>
+    <div id="pre-2-1" class="presub">
+      <h4>2.1 Integrasi Parsial dan Fungsi Trigonometri (hlm. 69)</h4>
+      <div class="formula">$$\int u\,dv=uv-\int v\,du$$</div>
+      <p class="muted">Urutan memilih $u$: <b>LIATE</b> (Logaritma, Invers trig, Aljabar, Trig, Eksponen). Untuk $\int\sin^2,\int\cos^2$ pakai identitas sudut ganda $\sin^2x=\tfrac12(1-\cos2x)$, $\cos^2x=\tfrac12(1+\cos2x)$. <i>Dipakai pada luas &amp; panjang busur kutub (5.4–5.5).</i></p>
+    </div>
+    <div id="pre-2-2" class="presub">
+      <h4>2.2 Fungsi Rasional; Pecahan Parsial (hlm. 86)</h4>
+      <div class="formula">$$\frac{1}{(x-a)(x-b)}=\frac{A}{x-a}+\frac{B}{x-b}$$</div>
+      <p class="muted">Faktor berulang $(x-a)^2$ butuh $\frac{A}{x-a}+\frac{B}{(x-a)^2}$; faktor kuadrat tak terfaktor butuh $\frac{Ax+B}{x^2+\dots}$. <i>Berguna untuk integral pada volume/luas.</i></p>
+    </div>
+    <div id="pre-2-3" class="presub">
+      <h4>2.3 Teknik-Teknik Integrasi yang Lain (hlm. 97)</h4>
+      <p class="muted">Substitusi trigonometri: $\sqrt{a^2-x^2}\Rightarrow x=a\sin\theta$; $\sqrt{a^2+x^2}\Rightarrow x=a\tan\theta$; $\sqrt{x^2-a^2}\Rightarrow x=a\sec\theta$. Substitusi aljabar untuk bentuk akar seperti $\int\sqrt{1+x}\,dx$. <i>Dipakai pada panjang kurva (4.3) &amp; luas permukaan (4.4).</i></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:4px">Bab 3 — Integrasi Numerik &amp; Integrasi Tak Wajar <span class="muted" style="font-size:13px">(hlm. 107)</span></h3>
+    <div id="pre-3-1" class="presub">
+      <h4>3.1 Integrasi Numerik (hlm. 107)</h4>
+      <div class="formula">$$\text{Trapesium: } \int_a^b f\,dx\approx \frac{h}{2}\big(f_0+2f_1+\dots+2f_{n-1}+f_n\big)$$</div>
+      <div class="formula">$$\text{Simpson: } \int_a^b f\,dx\approx \frac{h}{3}\big(f_0+4f_1+2f_2+\dots+4f_{n-1}+f_n\big)$$</div>
+    </div>
+    <div id="pre-3-2" class="presub">
+      <h4>3.2 Integral Tak Wajar (hlm. 121)</h4>
+      <div class="formula">$$\int_1^\infty \frac{dx}{x^p}\ \text{konvergen} \iff p>1$$</div>
+      <p class="muted">Batas tak hingga atau integran tak terbatas dihitung sebagai limit. <i>Mendasari uji integral &amp; deret-p (6.3).</i></p>
+    </div>
+    <div id="pre-3-3" class="presub">
+      <h4>3.3 Limit Bentuk Tak Tentu — L’Hôpital (hlm. 131)</h4>
+      <div class="formula">$$\text{Bila } \tfrac{0}{0}\ \text{atau}\ \tfrac{\infty}{\infty}:\quad \lim\frac{f}{g}=\lim\frac{f'}{g'}$$</div>
+      <p class="muted">Bentuk $0\cdot\infty,\ 1^\infty,\ \infty-\infty,\ 0^0$ diubah dulu ke $\tfrac00$ atau $\tfrac\infty\infty$. <i>Dipakai untuk limit barisan (6.1).</i></p>
+    </div>
+  </div>
+</section>
+
 <!-- ============ MATERI ============ -->
 <section id="materi">
   <h2>Ringkasan Materi</h2>
-  <p class="muted">Setiap subbab: konsep inti + rumus master + contoh kilat. Centang "Saya paham" di bawah tiap bab.</p>
+  <p class="muted">Setiap subbab: konsep inti + rumus master + contoh kilat. <b>Arahkan kursor (atau ketuk) sebuah rumus</b> untuk melihat arti tiap simbol. Centang "Saya paham" di bawah tiap bab.</p>
   <div class="subnav" id="matnav">
     <button data-m="b4" class="active">BAB 4 — Aplikasi Integral</button>
     <button data-m="b5">BAB 5 — Parametrik &amp; Kutub</button>
@@ -257,11 +336,13 @@
     <div class="warnbox"><span class="tag">Perhatian</span><br>Hati-hati sumbu putar bukan sumbu koordinat (misal putar terhadap garis $y=2$). Jari-jari = jarak ke garis itu, mis. $R=2-f(x)$.</div>
 
     <h3>4.3 Panjang Suatu Kurva (Arc Length)</h3>
+    <div class="prereq"><span class="tag">Prasyarat</span> <a class="preref" data-pre="pre-2-3">2.3 Teknik Integrasi Lain (hlm. 97)</a> — integral bentuk akar.</div>
     <div class="formula">$$L=\int_a^b \sqrt{1+\left(\dfrac{dy}{dx}\right)^2}\,dx \;=\;\int_c^d \sqrt{1+\left(\dfrac{dx}{dy}\right)^2}\,dy$$</div>
     <ul><li>Trik: cari $f'(x)$, kuadratkan, +1, akarkan. Sering disetel agar di dalam akar jadi kuadrat sempurna.</li></ul>
     <div class="tip"><b>Contoh.</b> $y=\tfrac23 x^{3/2}$, $y'=x^{1/2}$, $1+y'^2=1+x$, jadi $L=\int_0^a\sqrt{1+x}\,dx$.</div>
 
     <h3>4.4 Luas Permukaan Benda Putar</h3>
+    <div class="prereq"><span class="tag">Prasyarat</span> <a class="preref" data-pre="pre-2-1">2.1 Integrasi Parsial (hlm. 69)</a> · <a class="preref" data-pre="pre-2-3">2.3 Substitusi akar (hlm. 97)</a></div>
     <div class="formula">$$\text{Putar sumbu-x: } S=2\pi\int_a^b y\sqrt{1+(y')^2}\,dx$$</div>
     <div class="formula">$$\text{Putar sumbu-y: } S=2\pi\int_a^b x\sqrt{1+(y')^2}\,dx$$</div>
     <p class="muted">Ingat: $2\pi\times(\text{jari-jari}) \times (\text{elemen panjang busur } ds)$, dengan $ds=\sqrt{1+(y')^2}\,dx$.</p>
@@ -313,6 +394,7 @@
     </table>
 
     <h3>5.4 Luas dan Volume dalam Koordinat Kutub</h3>
+    <div class="prereq"><span class="tag">Prasyarat</span> <a class="preref" data-pre="pre-2-1">2.1 Integral $\sin^2,\cos^2$ (hlm. 69)</a></div>
     <div class="formula">$$A=\frac12\int_\alpha^\beta r^2\,d\theta$$</div>
     <div class="formula">$$A_{\text{antar kurva}}=\frac12\int_\alpha^\beta \big(r_{luar}^2-r_{dalam}^2\big)\,d\theta$$</div>
     <ul><li>Cari batas $\theta$ dari titik potong ($r_1=r_2$) atau dari $r=0$ (untuk daun mawar/kardioid).</li>
@@ -342,6 +424,7 @@
   <!-- BAB 6 -->
   <div class="matpage" id="b6">
     <h3>6.1 Barisan Tak Hingga</h3>
+    <div class="prereq"><span class="tag">Prasyarat</span> <a class="preref" data-pre="pre-3-3">3.3 L’Hôpital (hlm. 131)</a> — untuk limit barisan tak tentu.</div>
     <p>Barisan $\{a_n\}$ konvergen jika $\lim_{n\to\infty}a_n=L$ ada (berhingga).</p>
     <ul>
       <li>Pakai aturan limit, L'Hôpital (versi fungsi), atau Teorema Apit (Squeeze).</li>
@@ -356,6 +439,7 @@
     <div class="warnbox"><span class="tag">Perhatian — uji suku ke-n</span><br>Jika $\lim a_n\ne 0$ maka deret <b>divergen</b>. Tapi $\lim a_n=0$ <b>tidak</b> menjamin konvergen (contoh: deret harmonik $\sum\frac1n$ divergen).</div>
 
     <h3>6.3 Uji Konvergensi</h3>
+    <div class="prereq"><span class="tag">Prasyarat</span> <a class="preref" data-pre="pre-3-2">3.2 Integral Tak Wajar (hlm. 121)</a> — dasar uji integral &amp; deret-p.</div>
     <table>
       <tr><th>Uji</th><th>Cocok untuk</th><th>Kesimpulan</th></tr>
       <tr><td>Suku ke-n</td><td>Cek cepat</td><td>$\lim a_n\ne0$ maka divergen</td></tr>
@@ -371,6 +455,7 @@
     <div class="tip"><b>Alur memilih uji.</b> Cek $\lim a_n$ ke bentuk deret-p/geometri? ke ada faktorial/pangkat $n$? (rasio/akar) ke positif &amp; turun? (integral/banding) ke ganti tanda? (Leibniz).</div>
 
     <h3>6.4 Deret Pangkat; Taylor &amp; Maclaurin</h3>
+    <div class="prereq"><span class="tag">Prasyarat</span> <a class="preref" data-pre="pre-1-1">1.1 Turunan $e^x,\ln x$ (hlm. 1)</a> · <a class="preref" data-pre="pre-1-2">1.2 Invers Trigonometri (hlm. 33)</a></div>
     <div class="formula">$$\sum_{n=0}^\infty c_n (x-a)^n,\quad \text{radius konvergensi } R=\lim\left|\frac{c_n}{c_{n+1}}\right|$$</div>
     <div class="formula">$$\text{Taylor: } f(x)=\sum_{n=0}^\infty \frac{f^{(n)}(a)}{n!}(x-a)^n$$</div>
     <p>Maclaurin = Taylor di $a=0$. Hafalkan deret ini:</p>
@@ -449,6 +534,29 @@
   <div class="matpage active" id="l4"></div>
   <div class="matpage" id="l5"></div>
   <div class="matpage" id="l6"></div>
+</section>
+
+<!-- ============ SOAL SOLVER ============ -->
+<section id="solver">
+  <h2>Soal Solver Adaptif</h2>
+  <p class="muted">Generator membuat soal baru dengan angka yang masuk akal beserta langkah penyelesaian yang benar. Pakai tombol, atau ketik perintah di kotak: <code>jelaskan</code> (langkah berikutnya), <code>semua</code> (seluruh langkah + jawaban), <code>baru</code> (soal baru), atau nama topik seperti <code>luas</code>, <code>volume</code>, <code>deret</code>, <code>kutub</code>, <code>taylor</code>.</p>
+  <div class="card">
+    <div class="row">
+      <div class="field"><label>Topik</label><select class="fld" id="genTopic"></select></div>
+      <div class="field" style="flex:0 0 auto"><label>&nbsp;</label><button class="btn" id="genNew">Buat soal baru</button></div>
+    </div>
+    <div id="genOut" style="margin-top:10px"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn ghost sm" id="genMore">Jelaskan lebih lanjut</button>
+      <button class="btn ghost sm" id="genAll">Tampilkan semua langkah</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <input class="fld" id="genCmd" placeholder="Ketik perintah: jelaskan / semua / baru / luas / volume / deret / kutub / taylor ...">
+      <button class="btn" id="genSend" style="flex:0 0 auto">Kirim</button>
+    </div>
+    <div class="hint" id="genHint">Tip: kerjakan dulu sendiri, lalu ketik <code>jelaskan</code> berulang untuk membuka langkah satu per satu.</div>
+  </div>
+  <p class="muted" style="font-size:12px">Catatan: solver ini generator deterministik dengan langkah pasti benar — bukan AI bahasa bebas. Topik mengikuti Bab 4–6; tiap jawaban menautkan prasyarat Bab 1–3 bila relevan.</p>
 </section>
 
 <!-- ============ MOCK ============ -->
@@ -1120,6 +1228,255 @@ function applyTheme(t){document.documentElement.dataset.theme=t;localStorage.set
 document.getElementById('themeSel').onchange=e=>applyTheme(e.target.value);
 
 /* ===================================================================
+   FORMULA EXPLANATIONS (hover/tap)
+=================================================================== */
+const FEXP={
+ area:'$A$ = luas daerah. $f(x)$ kurva atas, $g(x)$ kurva bawah; integralkan selisih tingginya dari batas $a$ ke $b$ (titik potong).',
+ disk:'$V$ = volume. $R(x)$ = jari-jari cakram (jarak kurva ke sumbu putar). Kuadratkan lalu kali $\\pi$ (luas lingkaran $\\pi R^2$) dan jumlahkan sepanjang sumbu.',
+ washer:'$R_{luar}$ dan $R_{dalam}$ = jari-jari tepi luar dan lubang. $\\pi(R^2-r^2)$ = luas cincin; dipakai saat daerah tidak menempel sumbu putar.',
+ shell:'$2\\pi x$ = keliling kulit tabung berjari-jari $x$; tingginya $f(x)$. Praktis untuk putar terhadap sumbu-y dengan fungsi dalam $x$.',
+ arc:"$\\sqrt{1+(y')^2}\\,dx$ = panjang elemen busur $ds$. Integralkan dari $a$ ke $b$ untuk mendapat panjang kurva $L$.",
+ surfx:'$2\\pi y$ = keliling lingkaran yang dibentuk titik (jari-jari $=y$) saat diputar terhadap sumbu-x. Dikali elemen busur $ds$ memberi luas pita permukaan $S$.',
+ surfy:'$2\\pi x$ = keliling lingkaran hasil putar terhadap sumbu-y (jari-jari $=x$). Dikali elemen busur $ds$ = luas permukaan $S$.',
+ cx:'$\\bar x$ = koordinat-x titik berat. Tiap elemen luas $[f-g]\\,dx$ dibobot jaraknya $x$, lalu dibagi luas total $A$.',
+ cy:'$\\bar y$ = koordinat-y titik berat. $\\tfrac12(f^2-g^2)$ = momen terhadap sumbu-x per satuan lebar; dibagi $A$.',
+ pdydx:'Kemiringan kurva parametrik: bagi laju $y$ terhadap $t$ ($dy/dt$) dengan laju $x$ terhadap $t$ ($dx/dt$).',
+ parc:'Panjang busur parametrik: $\\sqrt{\\dot x^2+\\dot y^2}\\,dt$ = jarak yang ditempuh tiap selang $dt$ (Pythagoras pada kecepatan).',
+ pconv:'Hubungan kutub dan Cartesius: $r$ = jarak ke titik asal, $\\theta$ = sudut, dengan $x=r\\cos\\theta$ dan $y=r\\sin\\theta$.',
+ parea:'$\\tfrac12 r^2\\,d\\theta$ = luas juring (sektor) kecil berjari-jari $r$ dan sudut $d\\theta$. Integralkan dari $\\alpha$ ke $\\beta$.',
+ pantar:'Luas antara dua kurva kutub: selisih sektor luar ($r_{luar}^2$) dan dalam ($r_{dalam}^2$), dikali $\\tfrac12$, lalu integralkan.',
+ pdy:"Kemiringan garis singgung kurva kutub via $x=r\\cos\\theta,\\ y=r\\sin\\theta$ sebagai parametrik berparameter $\\theta$ ($r'=dr/d\\theta$).",
+ parc2:"Panjang busur kutub: $\\sqrt{r^2+(r')^2}\\,d\\theta$ menggabungkan perubahan jarak ($r'$) dan gerak menyudut ($r$).",
+ geo:'$a$ = suku pertama, $r$ = rasio antar suku. Jumlah tak hingga ada (konvergen) hanya bila $|r|<1$, hasilnya $a/(1-r)$.',
+ tele:'Deret teleskopik: suku berurutan saling meniadakan sehingga jumlah parsial hanya menyisakan $b_1$ dikurangi limit suku terakhir.',
+ rad:'$R$ = radius konvergensi: deret pangkat konvergen untuk $|x-a|<R$, dihitung dari rasio koefisien $|c_n/c_{n+1}|$.',
+ tay:'Koefisien deret Taylor: turunan ke-$n$ fungsi di titik $a$ dibagi $n!$. Maclaurin = kasus khusus $a=0$.'
+};
+const FEXP_RULES=[
+ ['irisan vertikal','area'],['irisan horizontal','area'],
+ ['R_{luar}','washer'],['[R(x)]^2','disk'],['jari-jari','shell'],
+ ['dx}{dy}','arc'],[' y\\sqrt{1+(y','surfx'],[' x\\sqrt{1+(y','surfy'],
+ ['bar{x}=\\frac{1}{A}','cx'],['bar{y}=\\frac{1}{A}','cy'],
+ ['dy/dt}{dx/dt}','pdydx'],['dx}{dt}','parc'],['r^2=x^2+y^2','pconv'],
+ ['antar kurva','pantar'],["r'\\sin\\theta+r\\cos\\theta",'pdy'],
+ ['r^2+\\left(\\tfrac{dr}','parc2'],['\\frac12\\int_\\alpha^\\beta r^2','parea'],
+ ['Geometri:','geo'],['Teleskopik:','tele'],['radius konvergensi','rad'],['Taylor:','tay']
+];
+function explainFor(t){for(const [need,key] of FEXP_RULES){if(t.indexOf(need)>=0)return FEXP[key];}return null;}
+function buildFormulaExp(){
+  document.querySelectorAll('#materi .formula').forEach(f=>{
+    if(f.dataset.fx)return;
+    const exp=explainFor(f.textContent); if(!exp)return;
+    f.dataset.fx='1';
+    const wrap=document.createElement('div'); wrap.className='fwrap';
+    f.parentNode.insertBefore(wrap,f); wrap.appendChild(f);
+    const e=document.createElement('div'); e.className='fexp';
+    e.innerHTML='<span class="tag">Arti rumus</span> '+exp+' <span class="fhint">(klik untuk menyematkan)</span>';
+    wrap.appendChild(e);
+    f.addEventListener('click',()=>wrap.classList.toggle('show'));
+  });
+}
+
+/* ===================================================================
+   PREREQUISITE JUMP (chip -> Prasyarat section + highlight)
+=================================================================== */
+document.addEventListener('click',e=>{
+  const a=e.target.closest('.preref'); if(!a)return;
+  const id=a.dataset.pre;
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
+  const nb=document.querySelector('#nav button[data-t="prasyarat"]'); if(nb)nb.classList.add('active');
+  document.querySelectorAll('main > section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('prasyarat').classList.add('active');
+  const tgt=document.getElementById(id);
+  if(tgt){tgt.scrollIntoView({behavior:'smooth',block:'center'});tgt.classList.add('prehit');setTimeout(()=>tgt.classList.remove('prehit'),1600);}
+});
+
+/* ===================================================================
+   SOAL GENERATOR (deterministik, angka rapi, langkah benar)
+=================================================================== */
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;}
+function fr(n,d){if(d<0){n=-n;d=-d;}const g=gcd(n,d);n/=g;d/=g;return d===1?(''+n):('\\tfrac{'+n+'}{'+d+'}');}
+function coef(n,d){if(d<0){n=-n;d=-d;}const g=gcd(n,d);n/=g;d/=g;if(d===1)return n===1?'':(''+n);return '\\tfrac{'+n+'}{'+d+'}';}
+function frPi(n,d){const c=coef(n,d);return (c===''?'':c)+'\\pi';}
+function ri(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+const PRE={
+ '1-1':{a:'pre-1-1',l:'1.1 Turunan/integral eksponen & logaritma (hlm. 1)'},
+ '1-2':{a:'pre-1-2',l:'1.2 Invers Trigonometri (hlm. 33)'},
+ '2-1':{a:'pre-2-1',l:'2.1 Integrasi Parsial & Trigonometri (hlm. 69)'},
+ '2-3':{a:'pre-2-3',l:'2.3 Teknik Integrasi Lain (hlm. 97)'},
+ '3-2':{a:'pre-3-2',l:'3.2 Integral Tak Wajar (hlm. 121)'},
+ '3-3':{a:'pre-3-3',l:'3.3 Limit Tak Tentu / L’Hôpital (hlm. 131)'}
+};
+const GENS=[
+ {key:'luas',label:'Luas antar kurva (4.1)',fn(){
+   const m=ri(2,6);
+   return {topic:'Luas antar kurva — 4.1',
+     statement:`Hitung luas daerah yang dibatasi $y=${m}x$ dan $y=x^2$.`,
+     steps:[
+       `Cari titik potong: $${m}x=x^2\\Rightarrow x(x-${m})=0$, jadi $x=0$ dan $x=${m}$.`,
+       `Pada $[0,${m}]$ garis $${m}x$ berada di atas $x^2$, sehingga $A=\\int_0^{${m}}(${m}x-x^2)\\,dx$.`,
+       `Antiturunan $\\dfrac{${m}x^2}{2}-\\dfrac{x^3}{3}$; substitusi $x=${m}$ (batas bawah 0 bernilai 0).`,
+       `$A=\\dfrac{${m}\\cdot${m}^2}{2}-\\dfrac{${m}^3}{3}=${fr(m*m*m,2)}-${fr(m*m*m,3)}=${fr(m*m*m,6)}$.`
+     ],
+     answer:`$A=${fr(m*m*m,6)}$ satuan luas.`, prereq:[]};
+ }},
+ {key:'disk',label:'Volume cakram (4.2)',fn(){
+   const k=ri(1,4), b=ri(2,4); const fx=k===1?'\\sqrt{x}':`\\sqrt{${k}x}`; const kx=k===1?'x':`${k}x`;
+   return {topic:'Volume cakram — 4.2',
+     statement:`Daerah di bawah $y=${fx}$, $0\\le x\\le ${b}$, diputar terhadap sumbu-x. Cari volumenya.`,
+     steps:[
+       `Metode cakram: $V=\\pi\\int_0^{${b}}[R(x)]^2\\,dx$ dengan $R(x)=${fx}$.`,
+       `$[R(x)]^2=${kx}$, sehingga $V=\\pi\\int_0^{${b}}${kx}\\,dx$.`,
+       `$V=\\pi\\left[\\dfrac{${k===1?'':k}x^2}{2}\\right]_0^{${b}}=\\pi\\cdot\\dfrac{${k===1?'':k+'\\cdot'}${b}^2}{2}=${frPi(k*b*b,2)}$.`
+     ],
+     answer:`$V=${frPi(k*b*b,2)}$.`, prereq:[]};
+ }},
+ {key:'shell',label:'Volume kulit tabung (4.2)',fn(){
+   const b=ri(2,4);
+   return {topic:'Volume kulit tabung — 4.2',
+     statement:`Daerah di bawah $y=x^2$, $0\\le x\\le ${b}$, diputar terhadap sumbu-y. Gunakan metode kulit.`,
+     steps:[
+       `Kulit: $V=2\\pi\\int_0^{${b}}x\\cdot f(x)\\,dx=2\\pi\\int_0^{${b}}x\\cdot x^2\\,dx$.`,
+       `$=2\\pi\\int_0^{${b}}x^3\\,dx=2\\pi\\left[\\dfrac{x^4}{4}\\right]_0^{${b}}$.`,
+       `$=2\\pi\\cdot\\dfrac{${b}^4}{4}=${frPi(2*Math.pow(b,4),4)}$.`
+     ],
+     answer:`$V=${frPi(2*Math.pow(b,4),4)}$.`, prereq:[]};
+ }},
+ {key:'arc',label:'Panjang kurva (4.3)',fn(){
+   const s=pick([2,3,4,5]); const b=s*s-1;
+   return {topic:'Panjang kurva — 4.3',
+     statement:`Hitung panjang kurva $y=\\tfrac23 x^{3/2}$ dari $x=0$ sampai $x=${b}$.`,
+     steps:[
+       `$y'=x^{1/2}$, maka $1+(y')^2=1+x$.`,
+       `$L=\\int_0^{${b}}\\sqrt{1+x}\\,dx=\\left[\\tfrac23(1+x)^{3/2}\\right]_0^{${b}}$.`,
+       `$1+${b}=${s*s}$ dan $${s*s}^{3/2}=${s}^3=${s*s*s}$, jadi $L=\\tfrac23(${s*s*s}-1)=${fr(2*(s*s*s-1),3)}$.`
+     ],
+     answer:`$L=${fr(2*(s*s*s-1),3)}$.`, prereq:[PRE['2-3']]};
+ }},
+ {key:'geo',label:'Deret geometri (6.2)',fn(){
+   const a=ri(2,6), k=pick([2,3,4,5]);
+   return {topic:'Deret geometri — 6.2',
+     statement:`Hitung jumlah deret geometri $\\sum_{n=0}^\\infty ${a}\\left(\\tfrac{1}{${k}}\\right)^n$.`,
+     steps:[
+       `Suku awal $a=${a}$, rasio $r=\\tfrac1{${k}}$. Karena $|r|<1$, deret konvergen.`,
+       `$S=\\dfrac{a}{1-r}=\\dfrac{${a}}{1-\\tfrac1{${k}}}=\\dfrac{${a}}{\\tfrac{${k-1}}{${k}}}$.`,
+       `$S=${a}\\cdot\\dfrac{${k}}{${k-1}}=${fr(a*k,k-1)}$.`
+     ],
+     answer:`$S=${fr(a*k,k-1)}$.`, prereq:[]};
+ }},
+ {key:'pseries',label:'Uji deret-p (6.3)',fn(){
+   const o=pick([['\\tfrac12',false],['\\tfrac23',false],['1',false],['\\tfrac32',true],['2',true],['3',true]]);
+   const c=o[1];
+   return {topic:'Uji deret-p — 6.3',
+     statement:`Tentukan apakah deret $\\sum_{n=1}^\\infty \\dfrac{1}{n^{${o[0]}}}$ konvergen atau divergen.`,
+     steps:[
+       `Bentuk deret-p dengan $p=${o[0]}$.`,
+       `Aturan: deret-p konvergen jika $p>1$ dan divergen jika $p\\le 1$.`,
+       `Karena $p=${o[0]}${c?'>1':'\\le 1'}$, deret <b>${c?'konvergen':'divergen'}</b>.`
+     ],
+     answer:`Deret <b>${c?'konvergen':'divergen'}</b> (deret-p, $p=${o[0]}$).`, prereq:[PRE['3-2']]};
+ }},
+ {key:'ratio',label:'Uji rasio (6.3)',fn(){
+   const k=pick([2,3,5]);
+   return {topic:'Uji rasio — 6.3',
+     statement:`Selidiki konvergensi $\\sum_{n=0}^\\infty \\dfrac{${k}^n}{n!}$ memakai uji rasio.`,
+     steps:[
+       `$\\left|\\dfrac{a_{n+1}}{a_n}\\right|=\\dfrac{${k}^{\\,n+1}/(n+1)!}{${k}^{\\,n}/n!}=\\dfrac{${k}}{n+1}$.`,
+       `$L=\\lim_{n\\to\\infty}\\dfrac{${k}}{n+1}=0$.`,
+       `Karena $L=0<1$, menurut uji rasio deret <b>konvergen mutlak</b>.`
+     ],
+     answer:`<b>Konvergen mutlak</b> (rasio $\\to 0$).`, prereq:[]};
+ }},
+ {key:'polar',label:'Luas satu daun mawar (5.4)',fn(){
+   const n=ri(2,4);
+   return {topic:'Luas satu daun mawar — 5.4',
+     statement:`Cari luas satu daun mawar $r=\\cos(${n}\\theta)$.`,
+     steps:[
+       `Satu daun terbentuk saat $\\cos(${n}\\theta)\\ge0$, yaitu $\\theta\\in[-\\tfrac{\\pi}{${2*n}},\\tfrac{\\pi}{${2*n}}]$.`,
+       `$A=\\tfrac12\\int_{-\\pi/${2*n}}^{\\pi/${2*n}}\\cos^2(${n}\\theta)\\,d\\theta=\\tfrac14\\int_{-\\pi/${2*n}}^{\\pi/${2*n}}\\big(1+\\cos(${2*n}\\theta)\\big)\\,d\\theta$.`,
+       `$=\\tfrac14\\left[\\theta+\\dfrac{\\sin(${2*n}\\theta)}{${2*n}}\\right]_{-\\pi/${2*n}}^{\\pi/${2*n}}=\\tfrac14\\cdot\\dfrac{\\pi}{${n}}=\\dfrac{\\pi}{${4*n}}$.`
+     ],
+     answer:`$A=\\dfrac{\\pi}{${4*n}}$.`, prereq:[PRE['2-1']]};
+ }},
+ {key:'tele',label:'Deret teleskopik (6.2)',fn(){
+   const k=pick([1,2]); const ans=k===1?'1':'\\tfrac34';
+   const steps=k===1?[
+     `Pecahan parsial: $\\dfrac{1}{n(n+1)}=\\dfrac1n-\\dfrac1{n+1}$.`,
+     `$S_N=\\left(1-\\tfrac12\\right)+\\left(\\tfrac12-\\tfrac13\\right)+\\cdots+\\left(\\tfrac1N-\\tfrac1{N+1}\\right)=1-\\tfrac1{N+1}$.`,
+     `$\\lim_{N\\to\\infty}S_N=1$.`
+   ]:[
+     `Pecahan parsial: $\\dfrac{1}{n(n+2)}=\\tfrac12\\left(\\dfrac1n-\\dfrac1{n+2}\\right)$.`,
+     `Teleskop menyisakan $S_N=\\tfrac12\\left(1+\\tfrac12-\\tfrac1{N+1}-\\tfrac1{N+2}\\right)$.`,
+     `$\\lim_{N\\to\\infty}S_N=\\tfrac12\\left(1+\\tfrac12\\right)=\\tfrac34$.`
+   ];
+   return {topic:'Deret teleskopik — 6.2',
+     statement:`Hitung jumlah deret teleskopik $\\sum_{n=1}^\\infty \\dfrac{1}{n(n+${k})}$.`,
+     steps, answer:`$S=${ans}$.`, prereq:[]};
+ }},
+ {key:'macl',label:'Deret Maclaurin (6.4)',fn(){
+   const c=pick([1,2,3]); const cc=c===1?'':(''+c); const cn=c===1?'':(c+'^n\\,');
+   return {topic:'Deret Maclaurin — 6.4',
+     statement:`Cari deret Maclaurin untuk $f(x)=\\dfrac{1}{1+${cc}x^2}$.`,
+     steps:[
+       `Pakai deret dasar $\\dfrac{1}{1-u}=\\sum_{n=0}^\\infty u^n$ dengan $u=-${cc}x^2$.`,
+       `$f(x)=\\sum_{n=0}^\\infty(-${cc}x^2)^n=\\sum_{n=0}^\\infty(-1)^n ${cn}x^{2n}$.`,
+       `Konvergen untuk $|-${cc}x^2|<1$, yaitu $|x|<\\dfrac{1}{\\sqrt{${c}}}$.`
+     ],
+     answer:`$f(x)=\\sum_{n=0}^\\infty(-1)^n ${cn}x^{2n}$, untuk $|x|<\\tfrac{1}{\\sqrt{${c}}}$.`, prereq:[PRE['1-1']]};
+ }}
+];
+const TOPIC_KEYS=[['luas','luas'],['area','luas'],['cakram','disk'],['cincin','disk'],['volume','disk'],['kulit','shell'],['shell','shell'],['panjang','arc'],['arc','arc'],['geometri','geo'],['deret','geo'],['rasio','ratio'],['ratio','ratio'],['konvergen','pseries'],['kutub','polar'],['mawar','polar'],['polar','polar'],['teleskop','tele'],['taylor','macl'],['maclaurin','macl']];
+let curP=null, curReveal=0;
+function newProblem(key,count){
+  let g=(!key||key==='acak')?pick(GENS):(GENS.find(x=>x.key===key)||pick(GENS));
+  curP=g.fn(); curReveal=0;
+  if(count){state.genCount=(state.genCount||0)+1; save();}
+  document.getElementById('genHint').innerHTML='Kerjakan dulu sendiri, lalu ketik <code>jelaskan</code> berulang untuk membuka langkah satu per satu. Soal dibuat: '+(state.genCount||0)+'.';
+  renderProblem();
+}
+function renderProblem(){
+  const out=document.getElementById('genOut'); if(!out)return;
+  if(!curP){out.innerHTML='';return;}
+  let h=`<div class="genq"><span class="badge">${curP.topic}</span><p style="margin:8px 0 0"><b>${curP.statement}</b></p>`;
+  const ns=Math.min(curReveal,curP.steps.length);
+  for(let i=0;i<ns;i++) h+=`<div class="step"><span class="tag">Langkah ${i+1}</span><div>${curP.steps[i]}</div></div>`;
+  if(curReveal>=curP.steps.length){
+    h+=`<div class="ans show" style="display:block"><b>Jawaban.</b> ${curP.answer}</div>`;
+    if(curP.prereq&&curP.prereq.length){
+      h+=`<div class="prereq"><span class="tag">Prasyarat Bab 1–3</span> `+curP.prereq.map(p=>`<a class="preref" data-pre="${p.a}">${p.l}</a>`).join(' · ')+`</div>`;
+    }
+  }else{
+    h+=`<p class="hint">Langkah ${ns}/${curP.steps.length} terbuka. Klik "Jelaskan lebih lanjut" atau ketik <code>jelaskan</code>.</p>`;
+  }
+  h+=`</div>`;
+  out.innerHTML=h; typeset();
+}
+function revealMore(){if(!curP)return;curReveal=Math.min(curReveal+1,curP.steps.length);renderProblem();}
+function revealAll(){if(!curP)return;curReveal=curP.steps.length;renderProblem();}
+function handleCmd(raw){
+  const t=(raw||'').toLowerCase().trim(); if(!t)return;
+  if(/(baru|new|acak|random)/.test(t)){newProblem(document.getElementById('genTopic').value,true);}
+  else if(/(semua|all|jawab|answer|selesai|kunci)/.test(t)){revealAll();}
+  else if(/(jelas|explain|lanjut|langkah|step|next|terus|lagi)/.test(t)){revealMore();}
+  else{
+    const hit=TOPIC_KEYS.find(m=>t.indexOf(m[0])>=0);
+    if(hit)newProblem(hit[1],true);
+    else document.getElementById('genHint').innerHTML='Perintah tidak dikenal. Coba: <code>jelaskan</code>, <code>semua</code>, <code>baru</code>, atau topik seperti <code>luas</code>, <code>volume</code>, <code>deret</code>, <code>kutub</code>, <code>taylor</code>.';
+  }
+}
+function setupSolver(){
+  const sel=document.getElementById('genTopic');
+  sel.innerHTML='<option value="acak">Acak (semua topik)</option>'+GENS.map(g=>`<option value="${g.key}">${g.label}</option>`).join('');
+  document.getElementById('genNew').onclick=()=>newProblem(sel.value,true);
+  document.getElementById('genMore').onclick=revealMore;
+  document.getElementById('genAll').onclick=revealAll;
+  document.getElementById('genSend').onclick=()=>{const i=document.getElementById('genCmd');handleCmd(i.value);i.value='';};
+  document.getElementById('genCmd').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const i=e.target;handleCmd(i.value);i.value='';}});
+  newProblem('acak',false);
+}
+
+/* ===================================================================
    INIT
 =================================================================== */
 (function init(){
@@ -1127,6 +1484,8 @@ document.getElementById('themeSel').onchange=e=>applyTheme(e.target.value);
   document.getElementById('themeSel').value=localStorage.getItem(TKEY)||'dark';
   fillCloudForm();
   renderAll();
+  buildFormulaExp();
+  setupSolver();
   window.addEventListener('load',()=>setTimeout(typeset,600));
   if(Cloud.enabled())setTimeout(()=>Cloud.syncNow(),400);
 })();
