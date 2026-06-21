@@ -30,8 +30,16 @@ export function renderMarkdown(src: string): string {
   let s = (src || '').replace(/\r\n/g, '\n');
 
   // 1) Fenced code blocks
-  s = s.replace(/```[\w-]*\n?([\s\S]*?)```/g, (_, code) =>
-    keep(`<pre class="md-pre"><code>${escAll(String(code).replace(/\n$/, ''))}</code></pre>`));
+  s = s.replace(/```([\w-]*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+    const rawCode = String(code).replace(/\n$/, '');
+    const escCode = escAll(rawCode);
+    let html = `<pre class="md-pre"><code>${escCode}</code></pre>`;
+    if (lang === 'javascript' || lang === 'js') {
+      const b64 = btoa(encodeURIComponent(rawCode));
+      html += `<div style="margin-top:8px"><button class="btn ghost2 sm run-js-btn" data-code="${b64}">▶️ Render Grafik (Run Code)</button><canvas width="400" height="400" style="display:none; width:100%; max-width:400px; border:1px solid var(--line); border-radius:8px; margin-top:8px; background:#fff;"></canvas></div>`;
+    }
+    return keep(html);
+  });
   // 2) Display math
   s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, m) => keep(`$$${escAll(m)}$$`));
   s = s.replace(/\\\[([\s\S]+?)\\\]/g, (_, m) => keep(`\\[${escAll(m)}\\]`));

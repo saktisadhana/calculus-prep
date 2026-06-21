@@ -122,7 +122,7 @@ export function renderSolver(): void {
 // Default path: serverless backend (key kept server-side as GEMINI_API_KEY).
 // Fallback: if the user pasted their own key in Settings, call the provider
 // directly from the browser (supports Gemini, Claude, and Groq models).
-async function callAITutor(systemPrompt: string, userPrompt: string): Promise<string> {
+export async function callAITutor(systemPrompt: string, userPrompt: string): Promise<string> {
   let localKey = (localStorage.getItem('kalk2_ai_backend') || '').trim();
   let model = localStorage.getItem('kalk2_ai_model') || 'gemini-1.5-flash';
 
@@ -310,8 +310,8 @@ export function setupAIHighlight(): void {
     content.innerHTML = 'Menyusun penjelasan...';
 
     try {
-      const sys = 'Kamu adalah asisten cerdas Kalkulus 2. Pengguna menyorot teks ini di materi belajar mereka. Berikan penjelasan singkat, padat, dan sangat mudah dimengerti mengenai teks/rumus tersebut. Gunakan bahasa Indonesia yang bersahabat dengan format Markdown dan LaTeX ($...$).';
-      const ans = await callAITutor(sys, `Teks yang disorot: "${selectedText}"\n\nJelaskan konsep ini/apa maksudnya!`);
+      const sys = 'Kamu adalah asisten cerdas Kalkulus 2. Jika pengguna menyorot sebuah soal, berikan solusi langkah demi langkah untuk menyelesaikannya. Jika pengguna menyorot teori/rumus, jelaskan konsepnya dengan jelas. SAAT MENJELASKAN KONSEP, KAMU WAJIB: 1) Memberikan 1 contoh latihan soal singkat beserta jawabannya. 2) Menjelaskan "sister concept" atau jebakan umum (misal: jika ada lubang pada volume putar, gunakan metode cincin, bukan cakram; atau bedakan disk test vs ratio test). Gunakan format Markdown dan LaTeX ($...$).';
+      const ans = await callAITutor(sys, `Teks yang disorot:\n"${selectedText}"\n\nTolong jelaskan teks/soal di atas!`);
       content.className = 'ai-pop-content';
       content.innerHTML = renderMarkdown(ans);
       typeset(content);

@@ -77,10 +77,71 @@ export function renderDrills(): void {
       <div id="drillProblem" class="drill-problem" style="display:none"></div>
       <div id="drillChoices" class="drill-choices" style="display:none"></div>
     </div>
+
+    <div class="card" style="margin-top:24px;border-color:var(--primary);">
+      <h3>✨ Generator Soal Uraian AI (BETA)</h3>
+      <p class="muted">Generate soal essay ala EAS ITS secara dinamis. AI akan meracik angkanya agar enak dihitung dan memberikan visualisasi kurva (Canvas JS).</p>
+      <button class="btn" id="aiDrillBtn" style="background:var(--primary);color:#fff">Generate 1 Soal Uraian</button>
+      <div id="aiDrillResult" style="margin-top:16px;display:none;"></div>
+    </div>
   `;
 
   document.getElementById('drillStart')!.onclick = startDrill;
   document.getElementById('drillStop')!.onclick = stopDrill;
+  
+  document.getElementById('aiDrillBtn')!.onclick = async () => {
+    const btn = document.getElementById('aiDrillBtn') as HTMLButtonElement;
+    const res = document.getElementById('aiDrillResult')!;
+    btn.disabled = true;
+    btn.textContent = 'Meracik soal...';
+    res.style.display = 'block';
+    res.innerHTML = '<div class="ai-msg loading">AI sedang membuat soal yang angkanya cantik...</div>';
+    
+    try {
+      // Import dynamic to avoid circular dependencies if any, or assume it's imported at top
+      const { callAITutor } = await import('./solver.ts');
+      const { renderMarkdown } = await import('./markdown.ts');
+      
+      const sys = `Kamu adalah Generator Soal Kalkulus 2 tingkat Universitas (setara EAS ITS). 
+Buatlah SATU soal uraian / essay dari salah satu topik berikut secara acak: 
+1. Luas antar kurva (beserta instruksi sketsa)
+2. Titik berat (Centroid) daerah homogen
+3. Persamaan parametrik (mencari garis singgung vertikal/horizontal)
+4. Kurva kutub/polar (mencari luas dalam kurva kardioida, dll)
+5. Uji konvergensi barisan/deret
+
+ATURAN WAJIB:
+- Rancang angkanya agar HASIL PERHITUNGANNYA BULAT ATAU PECAHAN SEDERHANA (mudah dihitung tanpa kalkulator). Jangan terlalu mudah, tapi angkanya "cantik".
+- Tampilkan soal dengan jelas.
+- Kemudian berikan "KUNCI JAWABAN" langkah demi langkah.
+- JIKA TOPIK TERKAIT GRAFIK (Luas, Titik Berat, Polar, Parametrik), SAAT MEMBAHAS KUNCI JAWABAN, KAMU WAJIB MENYERTAKAN BLOK KODE JAVASCRIPT UNTUK MENGGAMBAR GRAFIKNYA DI CANVAS.
+
+Format untuk menggambar grafik:
+\`\`\`javascript
+// Gunakan variabel 'ctx' (CanvasRenderingContext2D) dan 'canvas' (HTMLCanvasElement 400x400)
+// Contoh menggambar polar:
+ctx.translate(200, 200);
+ctx.scale(40, -40); // sesuaikan scale agar pas
+ctx.beginPath();
+for(let t=0; t<=Math.PI*2; t+=0.05) {
+  let r = 2 - 2*Math.cos(t);
+  ctx.lineTo(r*Math.cos(t), r*Math.sin(t));
+}
+ctx.stroke();
+// tambahkan sumbu x dan y dll
+\`\`\`
+Gunakan Markdown dan LaTeX ($...$) untuk rumus.`;
+
+      const ans = await callAITutor(sys, 'Buatkan saya 1 soal latihan uraian yang bagus sekarang!');
+      res.innerHTML = renderMarkdown(ans);
+      typeset(res);
+    } catch (e: any) {
+      res.innerHTML = `<div class="warnbox">Gagal: ${e.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Generate Soal Baru';
+    }
+  };
 }
 
 function startDrill(): void {

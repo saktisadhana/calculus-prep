@@ -24,6 +24,7 @@ import { renderFlashcards } from './ui/flashcards.ts';
 import { renderDrills } from './ui/drills.ts';
 import { renderMock } from './ui/mock.ts';
 import { renderSettings, renderProfileDropdown } from './ui/settings.ts';
+import { setupFloatingChat } from './ui/chat.ts';
 
 // ===================================================================
 //  GLOBAL EVENT HANDLERS (delegation)
@@ -51,6 +52,26 @@ function setupGlobalHandlers(): void {
       if (ans?.classList.contains('ans')) {
         ans.classList.toggle('show');
         typeset(ans as HTMLElement);
+      }
+    }
+  });
+
+  // Run JS code blocks for graph rendering
+  document.addEventListener('click', e => {
+    const target = (e.target as HTMLElement).closest('.run-js-btn') as HTMLElement;
+    if (target && target.dataset.code) {
+      const code = decodeURIComponent(atob(target.dataset.code));
+      const canvas = target.nextElementSibling as HTMLCanvasElement;
+      if (canvas && canvas.tagName === 'CANVAS') {
+        canvas.style.display = 'block';
+        try {
+          const ctx = canvas.getContext('2d');
+          if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const fn = new Function('canvas', 'ctx', code);
+          fn(canvas, canvas.getContext('2d'));
+        } catch (err: any) {
+          alert('Error rendering graph: ' + err.message);
+        }
       }
     }
   });
@@ -105,6 +126,7 @@ function setupGlobalHandlers(): void {
   buildFormulaExp();
   setupFlowcharts();
   setupAIHighlight();
+  setupFloatingChat();
   setupGlobalHandlers();
 
   // MathJax typeset after load
