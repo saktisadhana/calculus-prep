@@ -23,26 +23,30 @@ export function renderPractice(): void {
 
     <div class="card" style="margin-top:16px;margin-bottom:24px;border-color:var(--primary);">
       <h3>✨ Generator Soal Uraian AI (BETA)</h3>
-      <p class="muted">Generate soal essay ala EAS ITS secara dinamis. AI akan meracik angkanya agar enak dihitung dan memberikan visualisasi kurva (Canvas JS).</p>
+      <p class="muted">Generate soal essay ala EAS ITS secara dinamis. AI akan meracik angkanya agar enak dihitung.</p>
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:12px;">
         <select class="fld" id="aiTopicSelect" style="max-width:300px; padding:8px;">
           <option value="Acak Semua Bab">🎲 Acak Semua Topik</option>
-          <optgroup label="Bab 4: Aplikasi Integral">
-            <option value="Bab 4.1: Luas antar kurva">4.1 Luas Antar Kurva</option>
-            <option value="Bab 4.2: Volume Benda Putar (Cakram & Cincin)">4.2 Volume Putar (Cakram/Cincin)</option>
-            <option value="Bab 4.3: Volume Benda Putar (Kulit Tabung)">4.3 Volume Putar (Kulit Tabung)</option>
-            <option value="Bab 4.4: Kerja / Usaha">4.4 Kerja / Usaha</option>
-            <option value="Bab 4.5: Titik Berat (Centroid)">4.5 Titik Berat (Centroid)</option>
+          <optgroup label="BAB 4: APLIKASI INTEGRAL TERTENTU">
+            <option value="Bab 4.1: Luas antara dua kurva">4.1 Luas antara dua kurva</option>
+            <option value="Bab 4.2: Menghitung Volume Benda Putar">4.2 Menghitung Volume Benda Putar</option>
+            <option value="Bab 4.3: Panjang Suatu Kurva">4.3 Panjang Suatu Kurva</option>
+            <option value="Bab 4.4: Luas Permukaan Benda Putar">4.4 Luas Permukaan Benda Putar</option>
+            <option value="Bab 4.5: Titik Berat">4.5 Titik Berat</option>
           </optgroup>
-          <optgroup label="Bab 5: Parametrik & Kutub">
-            <option value="Bab 5.1 & 5.2: Kalkulus Persamaan Parametrik">5.1-5.2 Kalkulus Parametrik</option>
-            <option value="Bab 5.3 & 5.4: Kalkulus Koordinat Polar">5.3-5.4 Kalkulus Polar (Luas dll)</option>
+          <optgroup label="BAB 5: PERSAMAAN PARAMETRIK DAN KOORDINAT KUTUB">
+            <option value="Bab 5.1: Persamaan Parametrik">5.1 Persamaan Parametrik</option>
+            <option value="Bab 5.2: Koordinat Kutub">5.2 Koordinat Kutub</option>
+            <option value="Bab 5.3: Grafik dalam Koordinat Kutub">5.3 Grafik dalam Koordinat Kutub</option>
+            <option value="Bab 5.4: Luas dan Volume dalam Koordinat Kutub">5.4 Luas dan Volume dalam Koordinat Kutub</option>
+            <option value="Bab 5.5: Garis Singgung dan Panjang Busur di Koordinat Kutub">5.5 Garis Singgung & Panjang Busur di Koordinat Kutub</option>
           </optgroup>
-          <optgroup label="Bab 6: Barisan & Deret">
-            <option value="Bab 6.1: Konvergensi Barisan">6.1 Konvergensi Barisan</option>
-            <option value="Bab 6.2 - 6.6: Uji Konvergensi Deret (Integral, Banding, Rasio, dll)">6.2-6.6 Uji Konvergensi Deret</option>
-            <option value="Bab 6.7: Deret Pangkat (Selang Konvergensi)">6.7 Deret Pangkat</option>
-            <option value="Bab 6.8: Deret Taylor & Maclaurin">6.8 Deret Taylor & Maclaurin</option>
+          <optgroup label="BAB 6: BARISAN DAN DERET">
+            <option value="Bab 6.1: Barisan Tak Hingga">6.1 Barisan Tak Hingga</option>
+            <option value="Bab 6.2: Deret Tak Hingga">6.2 Deret Takhingga</option>
+            <option value="Bab 6.3: Uji Konvergensi">6.3 Uji Konvergensi</option>
+            <option value="Bab 6.4: Deret Pangkat; Deret Taylor dan Maclaurin">6.4 Deret Pangkat; Deret Taylor dan Maclaurin</option>
+            <option value="Bab 6.5: Differensiasi dan Integrasi Deret Pangkat">6.5 Differensiasi dan Integrasi Deret Pangkat</option>
           </optgroup>
         </select>
         <button class="btn" id="aiPracticeBtn" style="background:var(--primary);color:#fff">Generate 1 Soal Uraian</button>
@@ -92,23 +96,7 @@ ATURAN WAJIB:
 - Rancang angkanya agar HASIL PERHITUNGANNYA BULAT ATAU PECAHAN SEDERHANA (mudah dihitung tanpa kalkulator). Jangan terlalu mudah, tapi angkanya "cantik".
 - Tampilkan soal dengan jelas.
 - Kemudian berikan "KUNCI JAWABAN" langkah demi langkah.
-- JIKA TOPIK TERKAIT GRAFIK (Luas, Titik Berat, Polar, Parametrik), SAAT MEMBAHAS KUNCI JAWABAN, KAMU WAJIB MENYERTAKAN BLOK KODE JAVASCRIPT UNTUK MENGGAMBAR GRAFIKNYA DI CANVAS.
-
-Format untuk menggambar grafik:
-\`\`\`javascript
-// Gunakan variabel 'ctx' (CanvasRenderingContext2D) dan 'canvas' (HTMLCanvasElement 400x400)
-// Contoh menggambar polar:
-ctx.translate(200, 200);
-ctx.scale(40, -40); // sesuaikan scale agar pas
-ctx.beginPath();
-for(let t=0; t<=Math.PI*2; t+=0.05) {
-  let r = 2 - 2*Math.cos(t);
-  ctx.lineTo(r*Math.cos(t), r*Math.sin(t));
-}
-ctx.stroke();
-// tambahkan sumbu x dan y dll
-\`\`\`
-Gunakan Markdown dan LaTeX ($...$) untuk rumus.`;
+- Gunakan Markdown dan LaTeX ($...$) untuk rumus.`;
 
       const ans = await callAITutor(sys, 'Buatkan saya 1 soal latihan uraian yang bagus sekarang!');
       res.innerHTML = renderMarkdown(ans);
