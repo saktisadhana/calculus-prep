@@ -3,6 +3,7 @@ import { GENS, TOPIC_KEYS, type GeneratedProblem } from '../data/generators.ts';
 import { state, save } from '../storage/state.ts';
 import { typeset } from './typeset.ts';
 import { pick } from '../util.ts';
+import { renderMarkdown } from './markdown.ts';
 
 let curP: GeneratedProblem | null = null;
 let curReveal = 0;
@@ -215,7 +216,7 @@ async function sendAIQuestion(): Promise<void> {
   try {
     const text = await callAITutor(AI_SYSTEM, `Pertanyaan siswa: ${question}`);
     resp.classList.remove('streaming');
-    resp.innerHTML = text.replace(/\n/g, '<br>');
+    resp.innerHTML = renderMarkdown(text);
     typeset(resp);
   } catch (err) {
     resp.classList.remove('streaming');
@@ -289,7 +290,7 @@ export function setupAIHighlight(): void {
       const sys = 'Kamu adalah asisten cerdas Kalkulus 2. Pengguna menyorot teks ini di materi belajar mereka. Berikan penjelasan singkat, padat, dan sangat mudah dimengerti mengenai teks/rumus tersebut. Gunakan bahasa Indonesia yang bersahabat dengan format Markdown dan LaTeX ($...$).';
       const ans = await callAITutor(sys, `Teks yang disorot: "${selectedText}"\n\nJelaskan konsep ini/apa maksudnya!`);
       content.className = 'ai-pop-content';
-      content.innerHTML = ans.replace(/\n/g, '<br>');
+      content.innerHTML = renderMarkdown(ans);
       typeset(content);
       placePopover(); // re-clamp after the content height changes
     } catch (e) {
