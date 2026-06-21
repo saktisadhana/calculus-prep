@@ -1,4 +1,4 @@
-// Jadwal (schedule) section — flexible Pomodoro engine + weighted timeline.
+// Jadwal (schedule) section - flexible Pomodoro engine + weighted timeline.
 // PRIORITY: focus minutes are allocated proportional to each study task's
 // `weight` (data/schedule.ts), so Bab 4 & 6 get more time than Bab 5.
 import { state, save } from '../storage/state.ts';
@@ -166,7 +166,7 @@ function updatePomUI(): void {
       miniTimer.textContent = '';
     } else {
       miniTimer.style.display = 'inline-block';
-      miniTimer.textContent = `⏱ ${timeStr}`;
+      miniTimer.textContent = timeStr;
       if (pomMode === 'focus') {
         miniTimer.style.color = 'var(--primary)';
         miniTimer.style.background = 'rgba(14,165,233,0.1)';
@@ -412,7 +412,7 @@ function generateTimeline(): string {
   const prepTime = 15;
   const totalAvail = (bedMin - cursor) - busyDur - totalBreakMins - prepTime;
 
-  // PRIORITY ALLOCATION — focus minutes proportional to each task's weight.
+  // PRIORITY ALLOCATION - focus minutes proportional to each task's weight.
   // First task is fixed prep (15 min). Bab 4 & 6 weigh more than Bab 5.
   const prefDur = focusTasks.map((t, i) =>
     i === 0 ? prepTime : Math.max(10, Math.round(d.focusMin * (t.weight ?? 1)))
@@ -443,7 +443,7 @@ function generateTimeline(): string {
     if (busyStartMin >= 0 && cursor < busyStartMin && cursor + duration > busyStartMin) {
       const truncDur = busyStartMin - cursor;
       if (truncDur >= 10) {
-        pomSchedule.push({ type: 'focus', duration: truncDur, time: `${fmtTime(cursor)}–${fmtTime(busyStartMin)}`, desc: `Sesi ${i + 1}: ${focusTasks[focusIdx].desc} (${truncDur} mnt — dipotong)`, k: 'jt' + focusIdx });
+        pomSchedule.push({ type: 'focus', duration: truncDur, time: `${fmtTime(cursor)}–${fmtTime(busyStartMin)}`, desc: `Sesi ${i + 1}: ${focusTasks[focusIdx].desc} (${truncDur} mnt - dipotong)`, k: 'jt' + focusIdx });
       }
       const bDur = busyEndMin - busyStartMin;
       pomSchedule.push({ type: 'busy', duration: bDur, time: `${fmtTime(busyStartMin)}–${fmtTime(busyEndMin)}`, desc: d.busyLabel || 'Sibuk / istirahat' });
@@ -479,7 +479,7 @@ function generateTimeline(): string {
       </div>
     </div>`;
   }).join('');
-  html += `<div class="slot brk"><div class="t">${endTime}</div><div>Selesai — istirahat penuh, tidur cukup!</div></div>`;
+  html += `<div class="slot brk"><div class="t">${endTime}</div><div>Selesai - istirahat penuh, tidur cukup!</div></div>`;
   return html;
 }
 
@@ -498,7 +498,7 @@ function generateTimelineFromExisting(): string {
       </div>
     </div>`;
   }).join('');
-  html += `<div class="slot brk"><div class="t">${endTime}</div><div>Selesai — istirahat penuh, tidur cukup!</div></div>`;
+  html += `<div class="slot brk"><div class="t">${endTime}</div><div>Selesai - istirahat penuh, tidur cukup!</div></div>`;
   return html;
 }
 
@@ -522,12 +522,12 @@ export function renderSchedule(): void {
   const el = document.getElementById('jadwal')!;
   const a = activeProfile();
   const exam = parseExam(a.examISO);
-  const examStr = exam ? dfmt.format(exam) : '—';
+  const examStr = exam ? dfmt.format(exam) : '-';
   const d = pomDefaults();
 
   el.innerHTML = `
     <h2>Jadwal Belajar Fleksibel</h2>
-    <p class="muted">Atur jadwalmu sendiri — pilih kapan mulai, berapa lama fokus dan istirahat, dan tandai waktu sibuk. Timer Pomodoro dengan alarm bunyi otomatis. <b>BAB 4 &amp; 6 otomatis dapat porsi waktu lebih besar dari BAB 5.</b></p>
+    <p class="muted">Atur jadwalmu sendiri - pilih kapan mulai, berapa lama fokus dan istirahat, dan tandai waktu sibuk. Timer Pomodoro dengan alarm bunyi otomatis. <b>BAB 4 &amp; 6 otomatis dapat porsi waktu lebih besar dari BAB 5.</b></p>
     <div class="progwrap"><div class="progbar" id="jadbar"></div></div>
 
     <div class="pom-container">
@@ -589,16 +589,16 @@ export function renderSchedule(): void {
     </div>
 
     <div class="card">
-      <h3 style="margin-top:4px">HARI UJIAN — <span>${examStr}</span></h3>
+      <h3 style="margin-top:4px">HARI UJIAN - <span>${examStr}</span></h3>
       <div class="timeline" id="tl-exam">${renderExamTL()}</div>
     </div>
 
-    <div class="warnbox"><span class="tag">Aturan emas</span><br>Tidur minimal 6–7 jam. Otak mengonsolidasi memori saat tidur — begadang penuh justru menurunkan skor. Berhenti belajar maksimal jam 23:00.</div>
+    <div class="warnbox"><span class="tag">Aturan emas</span><br>Tidur minimal 6–7 jam. Otak mengonsolidasi memori saat tidur - begadang penuh justru menurunkan skor. Berhenti belajar maksimal jam 23:00.</div>
 
     <div class="tip"><span class="tag">Tips Pomodoro</span><br>
-      <b>25/5</b> — Standar. Fokus 25 mnt, istirahat 5 mnt. Bagus untuk materi baru.<br>
-      <b>50/10</b> — Deep work. Untuk soal sulit dan mock exam.<br>
-      <b>45/15</b> — Balanced. Istirahat cukup untuk review kartu kilat.<br>
+      <b>25/5</b> - Standar. Fokus 25 mnt, istirahat 5 mnt. Bagus untuk materi baru.<br>
+      <b>50/10</b> - Deep work. Untuk soal sulit dan mock exam.<br>
+      <b>45/15</b> - Balanced. Istirahat cukup untuk review kartu kilat.<br>
       Setiap 4 sesi, ambil istirahat panjang 15–30 mnt. Minum, jalan, stretch.
     </div>
   `;

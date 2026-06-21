@@ -1,5 +1,5 @@
 /* =============================================
-   BASE — Reset, Typography, Core Layout
+   BASE - Reset, Typography, Core Layout
    ============================================= */
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -73,6 +73,14 @@ h1 {
   font-size: 16px;
   font-weight: 900;
   box-shadow: 0 2px 8px rgba(56, 189, 248, 0.4);
+}
+.logo-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
 }
 h1 span:not(.logo-icon) { color: var(--acc); }
 

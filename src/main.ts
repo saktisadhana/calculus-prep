@@ -1,4 +1,4 @@
-// Main entry point — imports styles, wires modules, boots the app.
+// Main entry point - imports styles, wires modules, boots the app.
 import './styles/variables.css';
 import './styles/base.css';
 import './styles/components.css';

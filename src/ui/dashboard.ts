@@ -8,17 +8,17 @@ export function renderDashboard(): void {
   const el = document.getElementById('dash')!;
   const a = activeProfile();
   const exam = parseExam(a.examISO);
-  const examStr = exam ? `${dfmt.format(exam)} — ${tfmt.format(exam)} WIB` : '—';
+  const examStr = exam ? `${dfmt.format(exam)} - ${tfmt.format(exam)} WIB` : '-';
 
   el.innerHTML = `
     <h2>Selamat datang, <span id="welcomeName">${a.name}</span></h2>
-    <p class="muted">Ujian: <b id="examLabel">${examStr}</b>. Aplikasi lengkap untuk persiapan Kalkulus 2 — rencana belajar, ringkasan materi, 60+ soal latihan, 3 mock exam, AI tutor, kartu kilat, dan tolak ukur.</p>
+    <p class="muted">Ujian: <b id="examLabel">${examStr}</b>. Aplikasi lengkap untuk persiapan Kalkulus 2 - rencana belajar, ringkasan materi, 60+ soal latihan, 3 mock exam, AI tutor, kartu kilat, dan tolak ukur.</p>
 
     <div class="grid g2" style="margin-top:14px">
       <div class="stat"><div class="big" id="s-mat">0%</div><div class="lbl">Materi dipahami</div></div>
       <div class="stat"><div class="big" id="s-jad">0%</div><div class="lbl">Jadwal selesai</div></div>
       <div class="stat"><div class="big" id="s-tu">0%</div><div class="lbl">Tolak Ukur tercapai</div></div>
-      <div class="stat"><div class="big" id="s-mock">—</div><div class="lbl">Skor mock terbaik</div></div>
+      <div class="stat"><div class="big" id="s-mock">-</div><div class="lbl">Skor mock terbaik</div></div>
     </div>
 
     <div class="card">
@@ -28,7 +28,7 @@ export function renderDashboard(): void {
         <li><b>Active recall.</b> Setelah baca tiap subbab, tutup layar dan tulis ulang rumus + 1 contoh dari ingatan.</li>
         <li><b>Latihan bertingkat.</b> Mudah ke sedang ke sulit. Jangan loncat ke soal sulit sebelum yang dasar lancar.</li>
         <li><b>Timed practice.</b> Kerjakan mock exam dengan timer agar terbiasa tekanan waktu.</li>
-        <li><b>Review kesalahan.</b> Catat tiap kesalahan di logbook mental — itu sumber nilai termudah.</li>
+        <li><b>Review kesalahan.</b> Catat tiap kesalahan di logbook mental - itu sumber nilai termudah.</li>
       </ol>
     </div>
 

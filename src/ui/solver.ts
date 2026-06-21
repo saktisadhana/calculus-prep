@@ -78,7 +78,7 @@ export function renderSolver(): void {
 
     <div class="card">
       <h3 style="margin-top:4px">AI Tutor</h3>
-      <p class="muted" style="margin-top:0">Tanya apa saja tentang Kalkulus 2 — AI menjelaskan langkah demi langkah dengan rumus LaTeX. Tanpa konfigurasi, app memakai AI server bawaan; atau pakai API key sendiri di Pengaturan.</p>
+      <p class="muted" style="margin-top:0">Tanya apa saja tentang Kalkulus 2 - AI menjelaskan langkah demi langkah dengan rumus LaTeX. Tanpa konfigurasi, app memakai AI server bawaan; atau pakai API key sendiri di Pengaturan.</p>
       <div class="ai-chat">
         <div class="row">
           <textarea class="fld" id="aiInput" placeholder="Contoh: Jelaskan cara menentukan apakah deret konvergen mutlak atau bersyarat..." style="min-height:70px"></textarea>

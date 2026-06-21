@@ -29,11 +29,11 @@ export function updateStats(): void {
   set('s-mat', mp + '%');
   set('s-jad', jp + '%');
   set('s-tu', tp + '%');
-  set('s-mock', state.mockbest != null ? state.mockbest + '/10' : '—');
+  set('s-mock', state.mockbest != null ? state.mockbest + '/10' : '-');
   setW('jadbar', jp + '%');
   setW('tubar', tp + '%');
 
   const d = tuKeys.filter(k => state[k]).length;
-  set('tucount', `${d} dari ${tuKeys.length} indikator tercapai (${tp}%) — target minimal 80%.`);
+  set('tucount', `${d} dari ${tuKeys.length} indikator tercapai (${tp}%) - target minimal 80%.`);
   set('mocklive', mockScore() + '/10');
 }

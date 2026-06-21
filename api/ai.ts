@@ -1,4 +1,4 @@
-// Vercel serverless function — AI Tutor backend.
+// Vercel serverless function - AI Tutor backend.
 // Keeps the API key on the server (set GEMINI_API_KEY in your Vercel project
 // env vars). The browser calls POST /api/ai with { system, prompt, model? }
 // and never sees the key. Optionally set GEMINI_MODEL to change the default.

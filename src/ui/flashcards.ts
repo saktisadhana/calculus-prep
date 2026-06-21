@@ -12,7 +12,7 @@ const fcDeck = [...flashcards];
 export function renderFlashcards(): void {
   const el = document.getElementById('flashcards')!;
   el.innerHTML = `
-    <h2>Kartu Kilat — Review Cepat</h2>
+    <h2>Kartu Kilat - Review Cepat</h2>
     <p class="muted">Klik kartu untuk membalik. Tandai "Sudah Paham" atau "Belum Paham" untuk melacak progres. Total: <b>${flashcards.length} kartu</b> dari Bab 1–6.</p>
 
     <div class="row" style="justify-content:center;gap:10px;margin-bottom:14px">

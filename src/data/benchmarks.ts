@@ -1,4 +1,4 @@
-// Benchmarks (Tolak Ukur) — success indicators
+// Benchmarks (Tolak Ukur) - success indicators
 export const benchmarks: [string, string][] = [
   ['tu1', 'Materi BAB 4: bisa menjelaskan kapan pakai cakram vs cincin vs kulit tanpa melihat catatan.'],
   ['tu2', 'Materi BAB 4: hafal dan paham rumus panjang kurva, luas permukaan, dan titik berat.'],

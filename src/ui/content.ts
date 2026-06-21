@@ -8,11 +8,11 @@ import { benchmarks } from '../data/benchmarks.ts';
 export function renderPrerequisites(): void {
   const el = document.getElementById('prasyarat')!;
   el.innerHTML = `
-    <h2>Prasyarat — Bab 1, 2, 3</h2>
+    <h2>Prasyarat - Bab 1, 2, 3</h2>
     <p class="muted">Bab 4–6 dibangun di atas Bab 1–3. Bila lupa asal sebuah teknik, lihat ringkasan di sini. Chip <b>Prasyarat</b> di Ringkasan Materi &amp; Soal Solver akan melompat ke subbab yang relevan di halaman ini.</p>
 
     <div class="card">
-      <h3 style="margin-top:4px">Bab 1 — Fungsi Transenden <span class="muted" style="font-size:13px">(hlm. 1)</span></h3>
+      <h3 style="margin-top:4px">Bab 1 - Fungsi Transenden <span class="muted" style="font-size:13px">(hlm. 1)</span></h3>
       <div id="pre-1-1" class="presub">
         <h4>1.1 Fungsi Eksponensial dan Logaritma (hlm. 1)</h4>
         <div class="formula">$$\\frac{d}{dx}e^x=e^x,\\quad \\int e^x dx=e^x+C,\\quad \\frac{d}{dx}\\ln x=\\frac1x,\\quad \\int\\frac{dx}{x}=\\ln|x|+C$$</div>
@@ -31,7 +31,7 @@ export function renderPrerequisites(): void {
     </div>
 
     <div class="card">
-      <h3 style="margin-top:4px">Bab 2 — Teknik Integrasi <span class="muted" style="font-size:13px">(hlm. 69)</span></h3>
+      <h3 style="margin-top:4px">Bab 2 - Teknik Integrasi <span class="muted" style="font-size:13px">(hlm. 69)</span></h3>
       <div id="pre-2-1" class="presub">
         <h4>2.1 Integrasi Parsial dan Fungsi Trigonometri (hlm. 69)</h4>
         <div class="formula">$$\\int u\\,dv=uv-\\int v\\,du$$</div>
@@ -49,7 +49,7 @@ export function renderPrerequisites(): void {
     </div>
 
     <div class="card">
-      <h3 style="margin-top:4px">Bab 3 — Integrasi Numerik &amp; Integrasi Tak Wajar <span class="muted" style="font-size:13px">(hlm. 107)</span></h3>
+      <h3 style="margin-top:4px">Bab 3 - Integrasi Numerik &amp; Integrasi Tak Wajar <span class="muted" style="font-size:13px">(hlm. 107)</span></h3>
       <div id="pre-3-1" class="presub">
         <h4>3.1 Integrasi Numerik (hlm. 107)</h4>
         <div class="formula">$$\\text{Trapesium: } \\int_a^b f\\,dx\\approx \\frac{h}{2}\\big(f_0+2f_1+\\dots+2f_{n-1}+f_n\\big)$$</div>
@@ -61,7 +61,7 @@ export function renderPrerequisites(): void {
         <p class="muted">Batas tak hingga atau integran tak terbatas dihitung sebagai limit. <i>Mendasari uji integral &amp; deret-p (6.3).</i></p>
       </div>
       <div id="pre-3-3" class="presub">
-        <h4>3.3 Limit Bentuk Tak Tentu — L'Hôpital (hlm. 131)</h4>
+        <h4>3.3 Limit Bentuk Tak Tentu - L'Hôpital (hlm. 131)</h4>
         <div class="formula">$$\\text{Bila } \\tfrac{0}{0}\\ \\text{atau}\\ \\tfrac{\\infty}{\\infty}:\\quad \\lim\\frac{f}{g}=\\lim\\frac{f'}{g'}$$</div>
         <p class="muted">Bentuk $0\\cdot\\infty,\\ 1^\\infty,\\ \\infty-\\infty,\\ 0^0$ diubah dulu ke $\\tfrac00$ atau $\\tfrac\\infty\\infty$. <i>Dipakai untuk limit barisan (6.1).</i></p>
       </div>
@@ -84,9 +84,9 @@ export function renderMaterials(): void {
     </div>
 
     <div class="subnav" id="matnav">
-      <button data-m="b4" class="active">BAB 4 — Aplikasi Integral</button>
-      <button data-m="b5">BAB 5 — Parametrik &amp; Kutub</button>
-      <button data-m="b6">BAB 6 — Barisan &amp; Deret</button>
+      <button data-m="b4" class="active">BAB 4 - Aplikasi Integral</button>
+      <button data-m="b5">BAB 5 - Parametrik &amp; Kutub</button>
+      <button data-m="b6">BAB 6 - Barisan &amp; Deret</button>
     </div>
 
     <div class="matpage active" id="b4">
@@ -152,7 +152,7 @@ export function renderMaterials(): void {
       </div>
 
       <h3>4.3 Panjang Suatu Kurva (Arc Length)</h3>
-      <div class="prereq"><span class="tag">Prasyarat</span> <a class="preref" data-pre="pre-2-3">2.3 Teknik Integrasi Lain (hlm. 97)</a> — integral bentuk akar.</div>
+      <div class="prereq"><span class="tag">Prasyarat</span> <a class="preref" data-pre="pre-2-3">2.3 Teknik Integrasi Lain (hlm. 97)</a> - integral bentuk akar.</div>
       <div class="formula">$$L=\\int_a^b \\sqrt{1+\\left(\\dfrac{dy}{dx}\\right)^2}\\,dx$$</div>
       <div class="tip"><b>Contoh.</b> $y=\\tfrac23 x^{3/2}$, $y'=x^{1/2}$, $1+y'^2=1+x$, jadi $L=\\int_0^a\\sqrt{1+x}\\,dx$.<br>
       <b>Video Referensi:</b> <a href="https://youtu.be/K1UgI0yPHOY?si=FqsqeGkXdEYjL4Ib" target="_blank">Panjang Busur</a></div>
@@ -256,7 +256,7 @@ export function renderMaterials(): void {
       <h3>6.2 Deret Tak Hingga</h3>
       <div class="formula">$$\\text{Geometri: } \\sum_{n=0}^\\infty ar^n=\\frac{a}{1-r}\\ \\ (|r|<1)$$</div>
       <div class="formula">$$\\text{Teleskopik: } \\sum (b_n-b_{n+1})=b_1-\\lim b_{n+1}$$</div>
-      <div class="warnbox"><span class="tag">Perhatian — uji suku ke-n</span><br>Jika $\\lim a_n\\ne 0$ maka deret <b>divergen</b>. Tapi $\\lim a_n=0$ <b>tidak</b> menjamin konvergen!</div>
+      <div class="warnbox"><span class="tag">Perhatian - uji suku ke-n</span><br>Jika $\\lim a_n\\ne 0$ maka deret <b>divergen</b>. Tapi $\\lim a_n=0$ <b>tidak</b> menjamin konvergen!</div>
       <div class="tip"><b>Video Referensi Barisan & Deret Tak Hingga:</b>
         <a href="https://youtu.be/S8MctLVnZxA?si=5UW8jHbDAtOtbslD" target="_blank">Part 1</a> ·
         <a href="https://youtu.be/gWa6rcvWV6k?si=Ke1zKuAuMYcZdZDa" target="_blank">Part 2</a> ·
@@ -331,7 +331,7 @@ export function renderFormulaSheet(): void {
     <h2>Lembar Rumus</h2>
     <p class="muted">Semua rumus master dalam satu halaman untuk review cepat sebelum ujian.</p>
 
-    <div class="card"><h3 style="margin-top:4px">BAB 4 — Aplikasi Integral</h3>
+    <div class="card"><h3 style="margin-top:4px">BAB 4 - Aplikasi Integral</h3>
       <div class="formula">$$A=\\int_a^b [f(x)-g(x)]\\,dx \\quad (f\\ge g)$$</div>
       <div class="formula">$$V_{\\text{cakram}}=\\pi\\int_a^b [R(x)]^2 dx,\\quad V_{\\text{cincin}}=\\pi\\int_a^b ([R]^2-[r]^2)\\,dx$$</div>
       <div class="formula">$$V_{\\text{kulit}}=2\\pi\\int_a^b x\\,f(x)\\,dx$$</div>
@@ -339,13 +339,13 @@ export function renderFormulaSheet(): void {
       <div class="formula">$$\\bar x=\\tfrac1A\\int x(f-g)\\,dx,\\quad \\bar y=\\tfrac1A\\int \\tfrac12(f^2-g^2)\\,dx,\\quad V=2\\pi\\bar d\\,A$$</div>
     </div>
 
-    <div class="card"><h3 style="margin-top:4px">BAB 5 — Parametrik &amp; Kutub</h3>
+    <div class="card"><h3 style="margin-top:4px">BAB 5 - Parametrik &amp; Kutub</h3>
       <div class="formula">$$\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt},\\qquad L=\\int_{t_1}^{t_2}\\sqrt{\\dot x^2+\\dot y^2}\\,dt$$</div>
       <div class="formula">$$x=r\\cos\\theta,\\ y=r\\sin\\theta,\\ r^2=x^2+y^2,\\ \\tan\\theta=\\tfrac yx$$</div>
       <div class="formula">$$A=\\tfrac12\\int_\\alpha^\\beta r^2\\,d\\theta,\\qquad L=\\int_\\alpha^\\beta\\sqrt{r^2+(r')^2}\\,d\\theta$$</div>
     </div>
 
-    <div class="card"><h3 style="margin-top:4px">BAB 6 — Barisan &amp; Deret</h3>
+    <div class="card"><h3 style="margin-top:4px">BAB 6 - Barisan &amp; Deret</h3>
       <div class="formula">$$\\sum_{n=0}^\\infty ar^n=\\frac{a}{1-r}\\ (|r|<1),\\qquad \\text{deret-p konvergen} \\iff p>1$$</div>
       <div class="formula">$$\\text{Rasio: } L=\\lim\\left|\\frac{a_{n+1}}{a_n}\\right|,\\qquad \\text{Akar: } L=\\lim\\sqrt[n]{|a_n|}$$</div>
       <div class="formula">$$f(x)=\\sum_{n=0}^\\infty \\frac{f^{(n)}(a)}{n!}(x-a)^n$$</div>
@@ -359,7 +359,7 @@ export function renderBenchmarks(): void {
   const el = document.getElementById('tolakukur')!;
   el.innerHTML = `
     <h2>Tolak Ukur Keberhasilan</h2>
-    <p class="muted">Indikator terukur. Centang yang sudah tercapai — target minimal lulus: <b>minimal 80% tercentang</b>.</p>
+    <p class="muted">Indikator terukur. Centang yang sudah tercapai - target minimal lulus: <b>minimal 80% tercentang</b>.</p>
     <div class="progwrap"><div class="progbar" id="tubar"></div></div>
     <p class="muted" id="tucount" style="margin-top:0"></p>
 

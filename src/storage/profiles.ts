@@ -1,4 +1,4 @@
-// Profile management — localStorage-based multi-user system
+// Profile management - localStorage-based multi-user system
 // Compatible with existing kalk2_profiles_v2 keys for data migration
 
 export interface Profile {

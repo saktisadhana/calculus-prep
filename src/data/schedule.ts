@@ -1,4 +1,4 @@
-// Schedule data — study day + exam day timeline.
+// Schedule data - study day + exam day timeline.
 // Each focus slot carries a `weight` used by the Pomodoro generator to allocate
 // study time. PRIORITY: Bab 4 & 6 are weighted higher than Bab 5, so the
 // generated timeline gives them proportionally more focus minutes.
@@ -35,5 +35,5 @@ export const examDay: ScheduleSlot[] = [
   { time: '08:30–09:15', desc: 'Koreksi mock, catat tiap kesalahan dan tipe soalnya', type: '' },
   { time: '09:15–10:00', desc: 'Review rumus master + 2 sampai 3 topik terlemah dari mock', type: '' },
   { time: '10:00–10:20', desc: 'Berangkat, bawa alat lengkap, tarik napas tenang', type: 'brk' },
-  { time: '10:30', desc: 'UJIAN KALKULUS 2 — semangat!', type: 'exam' },
+  { time: '10:30', desc: 'UJIAN KALKULUS 2 - semangat!', type: 'exam' },
 ];

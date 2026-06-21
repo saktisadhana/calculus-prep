@@ -1,4 +1,4 @@
-// Practice questions — 20+ per bab for comprehensive exam prep
+// Practice questions - 20+ per bab for comprehensive exam prep
 // Format: [difficulty, topic, question, solution]
 export type Difficulty = 'e' | 'm' | 'h';
 export type Question = [Difficulty, string, string, string];
@@ -93,7 +93,7 @@ export const soal: Record<string, Question[]> = {
     ['h', '5.5 Panjang busur kutub', 'Susun dan hitung panjang busur kardioid $r=1+\\cos\\theta$, $0\\le\\theta\\le2\\pi$.',
       '$r\'=-\\sin\\theta$. $r^2+r\'^2=(1+\\cos\\theta)^2+\\sin^2\\theta=2+2\\cos\\theta=4\\cos^2(\\theta/2)$. $L=\\int_0^{2\\pi}2|\\cos(\\theta/2)|\\,d\\theta=8$.'],
     ['m', '5.5 Garis singgung', 'Cari kemiringan garis singgung kurva $r=\\sin\\theta$ di $\\theta=\\pi/4$.',
-      '$\\frac{dy}{dx}=\\frac{r\'\\sin\\theta+r\\cos\\theta}{r\'\\cos\\theta-r\\sin\\theta}$. $r\'=\\cos\\theta$. Di $\\theta=\\pi/4$: $r=r\'=\\tfrac{\\sqrt2}{2}$. Jadi $\\frac{dy}{dx}=\\frac{\\tfrac12+\\tfrac12}{\\tfrac12-\\tfrac12}$ — penyebut $=0$, garis singgung vertikal.'],
+      '$\\frac{dy}{dx}=\\frac{r\'\\sin\\theta+r\\cos\\theta}{r\'\\cos\\theta-r\\sin\\theta}$. $r\'=\\cos\\theta$. Di $\\theta=\\pi/4$: $r=r\'=\\tfrac{\\sqrt2}{2}$. Jadi $\\frac{dy}{dx}=\\frac{\\tfrac12+\\tfrac12}{\\tfrac12-\\tfrac12}$ - penyebut $=0$, garis singgung vertikal.'],
     ['h', '5.5 Luas permukaan kutub', 'Kurva $r=1+\\cos\\theta$ diputar terhadap sumbu kutub. Susun integral luas permukaan.',
       '$y=r\\sin\\theta=(1+\\cos\\theta)\\sin\\theta$. $ds=\\sqrt{r^2+r\'^2}d\\theta=2|\\cos(\\theta/2)|d\\theta$. $S=2\\pi\\int_0^\\pi(1+\\cos\\theta)\\sin\\theta\\cdot 2\\cos(\\theta/2)\\,d\\theta$. Sederhanakan: $(1+\\cos\\theta)=2\\cos^2(\\theta/2)$, $\\sin\\theta=2\\sin(\\theta/2)\\cos(\\theta/2)$. $S=2\\pi\\int_0^\\pi 8\\cos^4(\\theta/2)\\sin(\\theta/2)\\,d\\theta=\\tfrac{32\\pi}{5}$.'],
   ],
@@ -124,7 +124,7 @@ export const soal: Record<string, Question[]> = {
       '$\\frac{a_{n+1}}{a_n}=\\frac{2^{n+1}/(n+1)!}{2^n/n!}=\\frac{2}{n+1}\\to0<1$ maka <b>konvergen</b> (mutlak).'],
     ['m', '6.3 Banding limit', 'Selidiki konvergensi $\\sum \\dfrac{n}{n^2+1}$.',
       'Banding limit dengan $\\frac1n$: $\\lim\\frac{n/(n^2+1)}{1/n}=\\lim\\frac{n^2}{n^2+1}=1>0$. Karena $\\sum\\frac1n$ divergen maka deret <b>divergen</b>.'],
-    ['m', '6.3 Leibniz', 'Selidiki $\\sum \\dfrac{(-1)^n}{\\sqrt n}$ — konvergen mutlak atau bersyarat?',
+    ['m', '6.3 Leibniz', 'Selidiki $\\sum \\dfrac{(-1)^n}{\\sqrt n}$ - konvergen mutlak atau bersyarat?',
       'Ganti tanda, $b_n=\\tfrac1{\\sqrt n}$ turun & $\\to0$ maka konvergen (Leibniz). Tapi $\\sum\\tfrac1{\\sqrt n}$ (deret-p $p=\\tfrac12$) divergen maka <b>konvergen bersyarat</b>.'],
     ['m', '6.3 Uji integral', 'Selidiki $\\sum_{n=2}^\\infty \\dfrac{1}{n\\ln n}$ dengan uji integral.',
       '$f(x)=\\frac{1}{x\\ln x}$ positif dan turun untuk $x\\ge2$. $\\int_2^\\infty\\frac{dx}{x\\ln x}=\\lim_{b\\to\\infty}[\\ln(\\ln x)]_2^b=\\infty$. Divergen oleh uji integral.'],

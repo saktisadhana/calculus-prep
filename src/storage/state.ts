@@ -1,4 +1,4 @@
-// Reactive state — wraps per-profile data with auto-save
+// Reactive state - wraps per-profile data with auto-save
 import { ensureProfiles, activeProfile, loadData, saveData, loadIdx, saveIdx } from './profiles.ts';
 import { Cloud } from './cloud.ts';
 

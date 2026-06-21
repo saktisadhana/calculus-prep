@@ -1,4 +1,4 @@
-// Theme toggle — dark/light
+// Theme toggle - dark/light
 const TKEY = 'kalk2_theme';
 
 export function applyTheme(t: string): void {

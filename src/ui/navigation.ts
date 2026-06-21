@@ -1,4 +1,4 @@
-// Navigation — main tabs + sub-tabs
+// Navigation - main tabs + sub-tabs
 export function setupNavigation(): void {
   // Main nav
   document.querySelectorAll<HTMLButtonElement>('#nav button').forEach(b => {

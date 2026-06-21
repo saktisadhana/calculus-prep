@@ -66,7 +66,7 @@ export function renderSettings(): void {
 
     <div class="card">
       <h3 style="margin-top:4px">AI Tutor</h3>
-      <p class="muted" style="margin-top:0">Secara default app memakai <b>AI server bawaan</b> (Gemini) — tidak perlu API key, asalkan <code>GEMINI_API_KEY</code> sudah diset di server Vercel. Untuk memakai key/penyedia sendiri (Gemini, Claude via <a href="https://console.anthropic.com/" target="_blank">Anthropic</a>, atau Groq), isi di bawah; jika diisi, key inilah yang dipakai dari browser.</p>
+      <p class="muted" style="margin-top:0">Secara default app memakai <b>AI server bawaan</b> (Gemini) - tidak perlu API key, asalkan <code>GEMINI_API_KEY</code> sudah diset di server Vercel. Untuk memakai key/penyedia sendiri (Gemini, Claude via <a href="https://console.anthropic.com/" target="_blank">Anthropic</a>, atau Groq), isi di bawah; jika diisi, key inilah yang dipakai dari browser.</p>
       <div class="field"><label>API Key (opsional)</label><input class="fld" id="aiKey" type="password" value="${localStorage.getItem('kalk2_ai_backend') || ''}" placeholder="Kosongkan untuk pakai server bawaan"></div>
       <div class="field" style="max-width:320px"><label>Model</label><select class="fld" id="aiModel">${modelOptions(selectedModel)}</select></div>
       <button class="btn sm" id="aiSave">Simpan konfigurasi AI</button>

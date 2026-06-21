@@ -1,4 +1,4 @@
-// 3 Mock exams — each 10 questions, covering Bab 4–6
+// 3 Mock exams - each 10 questions, covering Bab 4–6
 export interface MockQuestion {
   no: string;
   bab: string;

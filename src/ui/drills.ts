@@ -64,7 +64,7 @@ let drillActive = false;
 export function renderDrills(): void {
   const el = document.getElementById('drills')!;
   el.innerHTML = `
-    <h2>Drill Cepat — 3 Menit</h2>
+    <h2>Drill Cepat - 3 Menit</h2>
     <p class="muted">Jawab soal cepat sebanyak-banyaknya dalam 3 menit. Melatih kecepatan dan intuisi rumus. Skor terbaik: <b id="drillBest">${state.drillBest || 0}</b>.</p>
 
     <div class="drill-area">

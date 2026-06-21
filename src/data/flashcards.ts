@@ -1,4 +1,4 @@
-// Flashcard decks — ~60 cards across Bab 1–6
+// Flashcard decks - ~60 cards across Bab 1–6
 export interface Flashcard {
   bab: string;
   front: string;

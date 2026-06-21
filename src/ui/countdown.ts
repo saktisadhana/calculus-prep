@@ -9,9 +9,9 @@ export function updateCountdown(): void {
   const exam = parseExam(activeProfile().examISO);
   const el = document.getElementById('cd');
   if (!el) return;
-  if (!exam) { el.textContent = '—'; return; }
+  if (!exam) { el.textContent = '-'; return; }
   const diff = exam.getTime() - Date.now();
-  if (diff <= 0) { el.textContent = 'Saatnya ujian — semangat!'; return; }
+  if (diff <= 0) { el.textContent = 'Saatnya ujian - semangat!'; return; }
   const d = Math.floor(diff / 864e5);
   const h = Math.floor((diff % 864e5) / 3.6e6);
   const m = Math.floor((diff % 3.6e6) / 6e4);
