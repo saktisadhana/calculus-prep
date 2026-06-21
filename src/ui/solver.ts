@@ -146,25 +146,35 @@ async function callProviderDirect(apiKey: string, model: string, systemPrompt: s
   // OpenRouter (free models) — uses OpenAI-compatible format
   if (model.startsWith('openrouter/')) {
     const realModel = model.replace('openrouter/', '');
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: realModel,
-        max_tokens: 4096,
-        temperature: 0.3,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-      }),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
-    const data = await res.json();
-    return data.choices[0].message.content;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000); // 60s timeout
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: realModel,
+          max_tokens: 4096,
+          temperature: 0.3,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+        }),
+      });
+      clearTimeout(timeout);
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+      const data = await res.json();
+      return data.choices[0].message.content;
+    } catch (e: any) {
+      clearTimeout(timeout);
+      if (e.name === 'AbortError') throw new Error('Timeout: AI terlalu lambat (>60 detik). Coba model yang lebih kecil/cepat.');
+      throw e;
+    }
   }
 
   if (model.startsWith('claude')) {

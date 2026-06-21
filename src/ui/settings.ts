@@ -13,11 +13,11 @@ const AI_MODELS = [
     { v: 'gemini-2.5-pro', t: 'Gemini 2.5 Pro' },
   ] },
   { group: 'OpenRouter GRATIS (daftar di openrouter.ai)', options: [
-    { v: 'openrouter/openrouter/auto', t: 'Auto (otomatis pilih model gratis)' },
-    { v: 'openrouter/nvidia/nemotron-3-ultra-550b-a55b:free', t: 'Nemotron 3 Ultra 550B (gratis, paling pintar)' },
-    { v: 'openrouter/meta-llama/llama-3.3-70b-instruct:free', t: 'Llama 3.3 70B (gratis, bagus)' },
-    { v: 'openrouter/google/gemma-4-31b-it:free', t: 'Gemma 4 31B (gratis, Google)' },
+    { v: 'openrouter/meta-llama/llama-3.3-70b-instruct:free', t: 'Llama 3.3 70B (gratis, CEPAT, recommended)' },
+    { v: 'openrouter/google/gemma-4-31b-it:free', t: 'Gemma 4 31B (gratis, cepat, Google)' },
     { v: 'openrouter/qwen/qwen3-coder:free', t: 'Qwen 3 Coder (gratis, pintar)' },
+    { v: 'openrouter/nousresearch/hermes-3-llama-3.1-405b:free', t: 'Hermes 3 405B (gratis, sangat pintar)' },
+    { v: 'openrouter/openrouter/auto', t: 'Auto (otomatis pilih model gratis)' },
   ] },
   { group: 'Groq (perlu API key sendiri)', options: [
     { v: 'llama-3.3-70b-versatile', t: 'Llama 3.3 70B' },

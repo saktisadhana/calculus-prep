@@ -24,7 +24,29 @@ export function renderPractice(): void {
     <div class="card" style="margin-top:16px;margin-bottom:24px;border-color:var(--primary);">
       <h3>✨ Generator Soal Uraian AI (BETA)</h3>
       <p class="muted">Generate soal essay ala EAS ITS secara dinamis. AI akan meracik angkanya agar enak dihitung dan memberikan visualisasi kurva (Canvas JS).</p>
-      <button class="btn" id="aiPracticeBtn" style="background:var(--primary);color:#fff">Generate 1 Soal Uraian</button>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:12px;">
+        <select class="fld" id="aiTopicSelect" style="max-width:300px; padding:8px;">
+          <option value="Acak Semua Bab">🎲 Acak Semua Topik</option>
+          <optgroup label="Bab 4: Aplikasi Integral">
+            <option value="Bab 4.1: Luas antar kurva">4.1 Luas Antar Kurva</option>
+            <option value="Bab 4.2: Volume Benda Putar (Cakram & Cincin)">4.2 Volume Putar (Cakram/Cincin)</option>
+            <option value="Bab 4.3: Volume Benda Putar (Kulit Tabung)">4.3 Volume Putar (Kulit Tabung)</option>
+            <option value="Bab 4.4: Kerja / Usaha">4.4 Kerja / Usaha</option>
+            <option value="Bab 4.5: Titik Berat (Centroid)">4.5 Titik Berat (Centroid)</option>
+          </optgroup>
+          <optgroup label="Bab 5: Parametrik & Kutub">
+            <option value="Bab 5.1 & 5.2: Kalkulus Persamaan Parametrik">5.1-5.2 Kalkulus Parametrik</option>
+            <option value="Bab 5.3 & 5.4: Kalkulus Koordinat Polar">5.3-5.4 Kalkulus Polar (Luas dll)</option>
+          </optgroup>
+          <optgroup label="Bab 6: Barisan & Deret">
+            <option value="Bab 6.1: Konvergensi Barisan">6.1 Konvergensi Barisan</option>
+            <option value="Bab 6.2 - 6.6: Uji Konvergensi Deret (Integral, Banding, Rasio, dll)">6.2-6.6 Uji Konvergensi Deret</option>
+            <option value="Bab 6.7: Deret Pangkat (Selang Konvergensi)">6.7 Deret Pangkat</option>
+            <option value="Bab 6.8: Deret Taylor & Maclaurin">6.8 Deret Taylor & Maclaurin</option>
+          </optgroup>
+        </select>
+        <button class="btn" id="aiPracticeBtn" style="background:var(--primary);color:#fff">Generate 1 Soal Uraian</button>
+      </div>
       <div id="aiPracticeResult" style="margin-top:16px;display:none;"></div>
     </div>
 
@@ -45,7 +67,11 @@ export function renderPractice(): void {
   document.getElementById('aiPracticeBtn')!.onclick = async () => {
     const btn = document.getElementById('aiPracticeBtn') as HTMLButtonElement;
     const res = document.getElementById('aiPracticeResult')!;
+    const sel = document.getElementById('aiTopicSelect') as HTMLSelectElement;
+    const chosenTopic = sel.value;
+
     btn.disabled = true;
+    sel.disabled = true;
     btn.textContent = 'Meracik soal...';
     res.style.display = 'block';
     res.innerHTML = '<div class="ai-msg loading">AI sedang membuat soal yang angkanya cantik...</div>';
@@ -55,13 +81,12 @@ export function renderPractice(): void {
       const { renderMarkdown } = await import('./markdown.ts');
       const { typeset } = await import('./typeset.ts');
       
+      const topicPrompt = chosenTopic === 'Acak Semua Bab' 
+        ? 'dari salah satu topik Kalkulus 2 secara acak' 
+        : `KHUSUS tentang topik: **${chosenTopic}**`;
+
       const sys = `Kamu adalah Generator Soal Kalkulus 2 tingkat Universitas (setara EAS ITS). 
-Buatlah SATU soal uraian / essay dari salah satu topik berikut secara acak: 
-1. Luas antar kurva (beserta instruksi sketsa)
-2. Titik berat (Centroid) daerah homogen
-3. Persamaan parametrik (mencari garis singgung vertikal/horizontal)
-4. Kurva kutub/polar (mencari luas dalam kurva kardioida, dll)
-5. Uji konvergensi barisan/deret
+Buatlah SATU soal uraian / essay ${topicPrompt}.
 
 ATURAN WAJIB:
 - Rancang angkanya agar HASIL PERHITUNGANNYA BULAT ATAU PECAHAN SEDERHANA (mudah dihitung tanpa kalkulator). Jangan terlalu mudah, tapi angkanya "cantik".

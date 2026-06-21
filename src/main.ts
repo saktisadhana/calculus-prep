@@ -66,9 +66,20 @@ function setupGlobalHandlers(): void {
         canvas.style.display = 'block';
         try {
           const ctx = canvas.getContext('2d');
-          if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-          const fn = new Function('canvas', 'ctx', code);
-          fn(canvas, canvas.getContext('2d'));
+          if (ctx) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Bersihkan deklarasi 'const/let' dari variabel canvas & ctx supaya tidak error redeclaration
+            let cleanCode = code.replace(/\b(const|let|var)\s+(canvas|ctx)\b/g, '$2');
+            // Mock document supaya kalau AI memanggil getElementById tetap mengembalikan canvas kita
+            const fn = new Function('canvas', 'ctx', `
+              const document = {
+                getElementById: () => canvas,
+                querySelector: () => canvas
+              };
+              ${cleanCode}
+            `);
+            fn(canvas, ctx);
+          }
         } catch (err: any) {
           alert('Error rendering graph: ' + err.message);
         }
