@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persiapan Kalkulus 2 — BAB 4, 5, 6</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --ink:#e2e8f0; --muted:#94a3b8;
+    --acc:#38bdf8; --acc2:#a78bfa; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    --line:#334155; --chip:#0ea5e9;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  header{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#0b1220,#1e293b);border-bottom:1px solid var(--line);padding:14px 18px}
+  .htop{display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between}
+  h1{font-size:18px;margin:0}
+  h1 span{color:var(--acc)}
+  .countdown{background:#020617;border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-variant-numeric:tabular-nums}
+  .countdown b{color:var(--warn);font-size:18px}
+  nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  nav button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13px;transition:.15s}
+  nav button:hover{border-color:var(--acc)}
+  nav button.active{background:var(--acc);color:#04212f;font-weight:700;border-color:var(--acc)}
+  main{max-width:980px;margin:0 auto;padding:22px 18px 80px}
+  section{display:none;animation:fade .25s}
+  section.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+  h2{color:var(--acc);border-bottom:2px solid var(--line);padding-bottom:8px;margin-top:6px}
+  h3{color:var(--acc2);margin-top:26px}
+  h4{margin:18px 0 6px;color:#e2e8f0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+  .grid{display:grid;gap:12px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted);margin:2px 4px 2px 0}
+  .formula{background:#0b1220;border-left:3px solid var(--acc);border-radius:8px;padding:10px 14px;margin:10px 0;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--acc)}
+  ul{margin:8px 0 8px 4px;padding-left:20px}
+  li{margin:4px 0}
+  .tip{background:#0b2530;border:1px solid #14506b;border-radius:8px;padding:10px 14px;margin:10px 0;font-size:14px}
+  .tip b{color:var(--acc)}
+  .warnbox{background:#2a1d05;border:1px solid #6b4a14;border-radius:8px;padding:10px 14px;margin:10px 0;font-size:14px}
+  .timeline{border-left:2px solid var(--line);margin-left:8px;padding-left:18px}
+  .slot{position:relative;margin:0 0 14px}
+  .slot::before{content:"";position:absolute;left:-25px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--acc);border:2px solid var(--bg)}
+  .slot.brk::before{background:var(--warn)}
+  .slot.exam::before{background:var(--bad)}
+  .slot .t{font-weight:700;color:var(--acc)}
+  .slot.brk .t{color:var(--warn)}
+  .chk{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .chk:last-child{border-bottom:none}
+  .chk input{margin-top:5px;width:18px;height:18px;accent-color:var(--ok);cursor:pointer;flex:0 0 auto}
+  .chk label{cursor:pointer;flex:1}
+  .chk.done label{color:var(--muted);text-decoration:line-through}
+  .progwrap{background:#020617;border:1px solid var(--line);border-radius:999px;height:14px;overflow:hidden;margin:8px 0}
+  .progbar{height:100%;background:linear-gradient(90deg,var(--acc),var(--ok));width:0;transition:.4s}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+  .q .qh{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+  .q .badge{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--panel2);color:var(--muted);white-space:nowrap}
+  .b-e{color:#22c55e!important}.b-m{color:#f59e0b!important}.b-h{color:#ef4444!important}
+  button.toggle{margin-top:10px;background:var(--acc2);color:#1a103a;border:none;padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px}
+  button.toggle:hover{filter:brightness(1.1)}
+  .ans{display:none;margin-top:12px;padding:12px 14px;background:#0b1220;border-radius:8px;border-left:3px solid var(--ok)}
+  .ans.show{display:block}
+  .subnav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+  .subnav button{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer}
+  .subnav button.active{background:var(--acc2);color:#1a103a;font-weight:700}
+  .matpage{display:none}.matpage.active{display:block}
+  .big{font-size:30px;font-weight:800;color:var(--acc)}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+  .stat .lbl{font-size:12px;color:var(--muted)}
+  .timerbar{position:sticky;top:0;background:#020617;border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;z-index:10}
+  .timerbar .clk{font-size:26px;font-weight:800;color:var(--warn);font-variant-numeric:tabular-nums}
+  .btn{background:var(--acc);color:#04212f;border:none;padding:9px 16px;border-radius:8px;font-weight:700;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+  .btn.red{background:var(--bad);color:#fff}
+  a.reset{color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline}
+  details{margin:8px 0;background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+  summary{cursor:pointer;font-weight:600;color:var(--acc2)}
+  .muted{color:var(--muted)}
+  code{background:#0b1220;padding:1px 6px;border-radius:5px;color:#fbbf24}
+  @media(max-width:600px){h1{font-size:15px}.big{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="htop">
+    <h1>📘 Persiapan <span>Kalkulus 2</span> — Ujian Besok</h1>
+    <div class="countdown">Mundur ke ujian: <b id="cd">—</b></div>
+  </div>
+  <nav id="nav">
+    <button data-t="dash" class="active">🏠 Dashboard</button>
+    <button data-t="jadwal">🗓️ Jadwal</button>
+    <button data-t="materi">📖 Ringkasan Materi</button>
+    <button data-t="latihan">✏️ Latihan Soal</button>
+    <button data-t="mock">⏱️ Mock Exam</button>
+    <button data-t="tolakukur">🎯 Tolak Ukur</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ DASHBOARD ============ -->
+<section id="dash" class="active">
+  <h2>Selamat datang, Sakti! 🚀</h2>
+  <p class="muted">Ujian: <b>Senin, 22 Juni 2026 — 10:30 WIB</b>. Mulai belajar hari ini jam <b>11:30</b>. App ini berisi rencana, ringkasan materi, bank soal, mock exam, dan tolak ukur keberhasilan. Progresmu tersimpan otomatis di browser ini.</p>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="stat"><div class="big" id="s-mat">0%</div><div class="lbl">Materi dipahami</div></div>
+    <div class="stat"><div class="big" id="s-jad">0%</div><div class="lbl">Jadwal selesai</div></div>
+    <div class="stat"><div class="big" id="s-tu">0%</div><div class="lbl">Tolak Ukur tercapai</div></div>
+    <div class="stat"><div class="big" id="s-mock">—</div><div class="lbl">Skor mock terbaik</div></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:4px">Strategi inti 5 langkah</h3>
+    <ol>
+      <li><b>Pahami pola, bukan hafal.</b> Tiap topik punya "rumus master" + langkah baku. Kuasai langkahnya.</li>
+      <li><b>Active recall.</b> Setelah baca tiap subbab, tutup layar dan tulis ulang rumus + 1 contoh dari ingatan.</li>
+      <li><b>Latihan bertingkat.</b> Mudah → sedang → sulit. Jangan loncat ke soal sulit sebelum yang dasar lancar.</li>
+      <li><b>Timed practice.</b> Besok pagi kerjakan mock exam dengan timer agar terbiasa tekanan waktu.</li>
+      <li><b>Review kesalahan.</b> Catat tiap kesalahan di "logbook" mental — itu sumber nilai termudah.</li>
+    </ol>
+  </div>
+
+  <div class="tip">💡 <b>Urutan disarankan:</b> BAB 4 (paling banyak rumus integral) → BAB 6 (butuh ketelitian uji konvergensi) → BAB 5 (relatif baru, butuh visualisasi). Tapi app menyusun jadwal 4 → 5 → 6 mengikuti urutan silabusmu agar tidak bingung.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:4px">Peta 3 bab</h3>
+    <table>
+      <tr><th>Bab</th><th>Inti</th><th>Bobot fokus</th></tr>
+      <tr><td><b>BAB 4</b><br>Aplikasi Integral</td><td>Luas, volume (cakram/cincin/kulit), panjang kurva, luas permukaan, titik berat</td><td>🔥🔥🔥 Tinggi</td></tr>
+      <tr><td><b>BAB 5</b><br>Parametrik & Kutub</td><td>Kurva parametrik, koordinat & grafik kutub, luas/panjang busur kutub, garis singgung</td><td>🔥🔥 Sedang</td></tr>
+      <tr><td><b>BAB 6</b><br>Barisan & Deret</td><td>Barisan, deret, uji konvergensi, deret pangkat, Taylor/Maclaurin</td><td>🔥🔥🔥 Tinggi</td></tr>
+    </table>
+  </div>
+
+  <p class="muted" style="margin-top:18px"><a class="reset" onclick="resetAll()">↺ Reset semua progres</a></p>
+</section>
+
+<!-- ============ JADWAL ============ -->
+<section id="jadwal">
+  <h2>🗓️ Jadwal Belajar (jam-per-jam)</h2>
+  <p class="muted">Centang tiap blok saat selesai. Total fokus ±9 jam belajar hari ini + mock & review besok pagi.</p>
+  <div class="progwrap"><div class="progbar" id="jadbar"></div></div>
+
+  <div class="card">
+    <h3 style="margin-top:4px">HARI INI — Minggu, 21 Juni</h3>
+    <div class="timeline" id="tl-today"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:4px">BESOK — Senin, 22 Juni (hari H)</h3>
+    <div class="timeline" id="tl-tom"></div>
+  </div>
+
+  <div class="warnbox">⚠️ <b>Aturan emas:</b> tidur minimal 6–7 jam. Otak mengonsolidasi memori saat tidur — begadang penuh justru menurunkan skor. Berhenti belajar maksimal jam 23:00.</div>
+</section>
+
+<!-- ============ MATERI ============ -->
+<section id="materi">
+  <h2>📖 Ringkasan Materi</h2>
+  <p class="muted">Setiap subbab: konsep inti + rumus master + contoh kilat. Centang "✓ paham" di bawah tiap bab.</p>
+  <div class="subnav" id="matnav">
+    <button data-m="b4" class="active">BAB 4 — Aplikasi Integral</button>
+    <button data-m="b5">BAB 5 — Parametrik & Kutub</button>
+    <button data-m="b6">BAB 6 — Barisan & Deret</button>
+  </div>
+
+  <!-- BAB 4 -->
+  <div class="matpage active" id="b4">
+    <h3>4.1 Luas Antara Dua Kurva</h3>
+    <p>Luas daerah di antara dua kurva = integral dari (kurva atas − kurva bawah).</p>
+    <div class="formula">$$A=\int_a^b \big[f(x)-g(x)\big]\,dx \quad\text{(irisan vertikal, } f\ge g)$$</div>
+    <div class="formula">$$A=\int_c^d \big[w(y)-v(y)\big]\,dy \quad\text{(irisan horizontal, } w\ge v)$$</div>
+    <ul>
+      <li>Langkah: (1) gambar sketsa, (2) cari titik potong sebagai batas, (3) tentukan mana yang "atas/kanan", (4) integralkan selisihnya.</li>
+      <li>Jika kurva berpotongan/bertukar posisi, <b>pecah</b> integral di titik potong.</li>
+      <li>Pilih $dx$ atau $dy$ berdasarkan mana yang membuat batas paling sederhana.</li>
+    </ul>
+    <div class="tip"><b>Contoh:</b> Luas antara $y=x$ dan $y=x^2$ pada $[0,1]$: $A=\int_0^1 (x-x^2)\,dx=\tfrac12-\tfrac13=\tfrac16$.</div>
+
+    <h3>4.2 Volume Benda Putar</h3>
+    <p>Tiga metode utama. Pilih sesuai sumbu putar & bentuk daerah.</p>
+    <h4>Metode Cakram (Disk)</h4>
+    <div class="formula">$$V=\pi\int_a^b [R(x)]^2\,dx$$</div>
+    <p class="muted">Untuk daerah yang menempel pada sumbu putar (tanpa lubang).</p>
+    <h4>Metode Cincin (Washer)</h4>
+    <div class="formula">$$V=\pi\int_a^b \big([R_{luar}]^2-[R_{dalam}]^2\big)\,dx$$</div>
+    <p class="muted">Ada lubang di tengah (daerah tidak menempel sumbu).</p>
+    <h4>Metode Kulit Tabung (Shell)</h4>
+    <div class="formula">$$V=2\pi\int_a^b (\text{jari-jari})(\text{tinggi})\,dx=2\pi\int_a^b x\,f(x)\,dx$$</div>
+    <table>
+      <tr><th>Situasi</th><th>Pakai</th></tr>
+      <tr><td>Putar sumbu-x, daerah di bawah $f(x)$</td><td>Cakram (var $x$)</td></tr>
+      <tr><td>Putar sumbu-x, daerah antara 2 kurva</td><td>Cincin (var $x$)</td></tr>
+      <tr><td>Putar sumbu-y tapi fungsi dalam $x$</td><td>Kulit (var $x$) — paling praktis</td></tr>
+    </table>
+    <div class="warnbox">⚠️ Hati-hati sumbu putar bukan sumbu koordinat (misal putar terhadap garis $y=2$). Jari-jari = jarak ke garis itu, mis. $R=2-f(x)$.</div>
+
+    <h3>4.3 Panjang Suatu Kurva (Arc Length)</h3>
+    <div class="formula">$$L=\int_a^b \sqrt{1+\left(\dfrac{dy}{dx}\right)^2}\,dx \;=\;\int_c^d \sqrt{1+\left(\dfrac{dx}{dy}\right)^2}\,dy$$</div>
+    <ul><li>Trik: cari $f'(x)$, kuadratkan, +1, akarkan. Sering disetel agar di dalam akar jadi kuadrat sempurna.</li></ul>
+    <div class="tip"><b>Contoh:</b> $y=\tfrac23 x^{3/2}$, $y'=x^{1/2}$, $1+y'^2=1+x$, jadi $L=\int_0^a\sqrt{1+x}\,dx$.</div>
+
+    <h3>4.4 Luas Permukaan Benda Putar</h3>
+    <div class="formula">$$\text{Putar sumbu-x: } S=2\pi\int_a^b y\sqrt{1+(y')^2}\,dx$$</div>
+    <div class="formula">$$\text{Putar sumbu-y: } S=2\pi\int_a^b x\sqrt{1+(y')^2}\,dx$$</div>
+    <p class="muted">Ingat: $2\pi\times(\text{jari-jari}) \times (\text{elemen panjang busur } ds)$, dengan $ds=\sqrt{1+(y')^2}\,dx$.</p>
+
+    <h3>4.5 Titik Berat (Centroid)</h3>
+    <p>Untuk daerah datar homogen dengan luas $A$:</p>
+    <div class="formula">$$\bar{x}=\frac{1}{A}\int_a^b x\,[f(x)-g(x)]\,dx$$</div>
+    <div class="formula">$$\bar{y}=\frac{1}{A}\int_a^b \tfrac12\big([f(x)]^2-[g(x)]^2\big)\,dx$$</div>
+    <ul>
+      <li>$A=\int_a^b [f-g]\,dx$ dihitung dulu.</li>
+      <li><b>Teorema Pappus:</b> $V=2\pi\bar{d}\,A$ (volume = keliling lintasan centroid × luas). Cepat untuk soal pilihan ganda.</li>
+    </ul>
+    <details><summary>Ringkasan rumus BAB 4 (kartu kilat)</summary>
+      <p>Luas: $\int(\text{atas}-\text{bawah})$ · Cakram: $\pi\int R^2$ · Cincin: $\pi\int(R^2-r^2)$ · Kulit: $2\pi\int x\,f$ · Panjang: $\int\sqrt{1+y'^2}$ · Permukaan: $2\pi\int y\sqrt{1+y'^2}$ · Centroid: $\bar x=\frac1A\int x(f-g),\ \bar y=\frac1A\int\frac12(f^2-g^2)$.</p>
+    </details>
+    <div class="card" style="margin-top:18px">
+      <div class="chk" data-key="mat-b4"><input type="checkbox" id="mat-b4"><label for="mat-b4">✅ Saya paham BAB 4 (bisa pilih metode volume yang tepat & hitung tanpa contekan)</label></div>
+    </div>
+  </div>
+
+  <!-- BAB 5 -->
+  <div class="matpage" id="b5">
+    <h3>5.1 Persamaan Parametrik</h3>
+    <p>Kurva dinyatakan $x=f(t),\ y=g(t)$ dengan parameter $t$.</p>
+    <div class="formula">$$\frac{dy}{dx}=\frac{dy/dt}{dx/dt},\qquad \frac{d^2y}{dx^2}=\frac{d}{dt}\!\left(\frac{dy}{dx}\right)\Big/\frac{dx}{dt}$$</div>
+    <div class="formula">$$L=\int_{t_1}^{t_2}\sqrt{\left(\tfrac{dx}{dt}\right)^2+\left(\tfrac{dy}{dt}\right)^2}\,dt$$</div>
+    <ul><li>Eliminasi $t$ untuk dapat bentuk Cartesius bila perlu identifikasi kurva.</li></ul>
+
+    <h3>5.2 Koordinat Kutub</h3>
+    <p>Titik $(r,\theta)$. Konversi:</p>
+    <div class="formula">$$x=r\cos\theta,\quad y=r\sin\theta,\quad r^2=x^2+y^2,\quad \tan\theta=\frac{y}{x}$$</div>
+
+    <h3>5.3 Grafik dalam Koordinat Kutub</h3>
+    <table>
+      <tr><th>Persamaan</th><th>Bentuk</th></tr>
+      <tr><td>$r=a$</td><td>Lingkaran pusat O, jari-jari $a$</td></tr>
+      <tr><td>$r=a\cos\theta$ / $r=a\sin\theta$</td><td>Lingkaran lewat titik asal</td></tr>
+      <tr><td>$r=a\pm b\cos\theta$ ($a=b$)</td><td>Kardioid</td></tr>
+      <tr><td>$r=a\pm b\cos\theta$ ($a&lt;b$)</td><td>Limaçon berloop</td></tr>
+      <tr><td>$r=a\cos(n\theta)$</td><td>Mawar: $n$ ganjil → $n$ daun, $n$ genap → $2n$ daun</td></tr>
+      <tr><td>$r^2=a^2\cos(2\theta)$</td><td>Lemniskat</td></tr>
+    </table>
+
+    <h3>5.4 Luas dan Volume dalam Koordinat Kutub</h3>
+    <div class="formula">$$A=\frac12\int_\alpha^\beta r^2\,d\theta$$</div>
+    <div class="formula">$$A_{\text{antar kurva}}=\frac12\int_\alpha^\beta \big(r_{luar}^2-r_{dalam}^2\big)\,d\theta$$</div>
+    <ul><li>Cari batas $\theta$ dari titik potong ($r_1=r_2$) atau dari $r=0$ (untuk daun mawar/kardioid).</li>
+    <li>Manfaatkan simetri: hitung separuh lalu kali 2.</li></ul>
+    <div class="tip"><b>Contoh:</b> Luas satu daun $r=\cos 2\theta$: $A=\frac12\int_{-\pi/4}^{\pi/4}\cos^2 2\theta\,d\theta=\frac{\pi}{8}$.</div>
+
+    <h3>5.5 Garis Singgung & Panjang Busur di Koordinat Kutub</h3>
+    <p>Gunakan $x=r\cos\theta,\ y=r\sin\theta$ sebagai parametrik dengan parameter $\theta$:</p>
+    <div class="formula">$$\frac{dy}{dx}=\frac{r'\sin\theta+r\cos\theta}{r'\cos\theta-r\sin\theta},\qquad r'=\frac{dr}{d\theta}$$</div>
+    <div class="formula">$$L=\int_\alpha^\beta \sqrt{r^2+\left(\tfrac{dr}{d\theta}\right)^2}\,d\theta$$</div>
+    <ul><li>Garis singgung horizontal: pembilang $=0$; vertikal: penyebut $=0$.</li></ul>
+    <details><summary>Ringkasan rumus BAB 5 (kartu kilat)</summary>
+      <p>Parametrik: $\frac{dy}{dx}=\frac{\dot y}{\dot x}$, $L=\int\sqrt{\dot x^2+\dot y^2}$. Kutub: $x=r\cos\theta,y=r\sin\theta$. Luas kutub: $\frac12\int r^2 d\theta$. Busur kutub: $\int\sqrt{r^2+r'^2}\,d\theta$.</p>
+    </details>
+    <div class="card" style="margin-top:18px">
+      <div class="chk" data-key="mat-b5"><input type="checkbox" id="mat-b5"><label for="mat-b5">✅ Saya paham BAB 5 (bisa sketsa grafik kutub & hitung luas/busur)</label></div>
+    </div>
+  </div>
+
+  <!-- BAB 6 -->
+  <div class="matpage" id="b6">
+    <h3>6.1 Barisan Tak Hingga</h3>
+    <p>Barisan $\{a_n\}$ konvergen jika $\lim_{n\to\infty}a_n=L$ ada (berhingga).</p>
+    <ul>
+      <li>Pakai aturan limit, L'Hôpital (versi fungsi), atau Teorema Apit (Squeeze).</li>
+      <li>Barisan monoton + terbatas ⟹ konvergen.</li>
+      <li>Ingat: $\lim (1+\tfrac{x}{n})^n=e^x$, $\lim r^n=0$ jika $|r|&lt;1$.</li>
+    </ul>
+
+    <h3>6.2 Deret Tak Hingga</h3>
+    <p>Deret = jumlah suku barisan. Konvergen jika barisan jumlah parsial $S_N$ konvergen.</p>
+    <div class="formula">$$\text{Geometri: } \sum_{n=0}^\infty ar^n=\frac{a}{1-r}\ \ (|r|&lt;1)$$</div>
+    <div class="formula">$$\text{Teleskopik: } \sum (b_n-b_{n+1})=b_1-\lim b_{n+1}$$</div>
+    <div class="warnbox">⚠️ <b>Uji suku ke-n (divergensi):</b> jika $\lim a_n\ne 0$ maka deret <b>divergen</b>. Tapi $\lim a_n=0$ <b>tidak</b> menjamin konvergen (contoh: deret harmonik $\sum\frac1n$ divergen).</div>
+
+    <h3>6.3 Uji Konvergensi</h3>
+    <table>
+      <tr><th>Uji</th><th>Cocok untuk</th><th>Kesimpulan</th></tr>
+      <tr><td>Suku ke-n</td><td>Cek cepat</td><td>$\lim a_n\ne0$ ⟹ divergen</td></tr>
+      <tr><td>Deret-p</td><td>$\sum 1/n^p$</td><td>Konvergen ⟺ $p&gt;1$</td></tr>
+      <tr><td>Geometri</td><td>$\sum ar^n$</td><td>Konvergen ⟺ $|r|&lt;1$</td></tr>
+      <tr><td>Integral</td><td>$a_n=f(n)$ positif, turun</td><td>Deret & $\int f$ sependapat</td></tr>
+      <tr><td>Banding / Banding Limit</td><td>Mirip deret-p / geometri</td><td>Bandingkan dgn deret acuan</td></tr>
+      <tr><td>Rasio</td><td>Ada faktorial / $r^n$</td><td>$L=\lim|\tfrac{a_{n+1}}{a_n}|$: $&lt;1$ konv, $&gt;1$ div</td></tr>
+      <tr><td>Akar</td><td>Ada pangkat $n$</td><td>$L=\lim\sqrt[n]{|a_n|}$: $&lt;1$ konv</td></tr>
+      <tr><td>Deret Ganti-tanda (Leibniz)</td><td>$\sum(-1)^n b_n$</td><td>$b_n$ turun & $\to0$ ⟹ konvergen</td></tr>
+    </table>
+    <div class="tip"><b>Konvergen mutlak vs bersyarat:</b> jika $\sum|a_n|$ konvergen ⟹ <b>mutlak</b>. Jika $\sum a_n$ konvergen tapi $\sum|a_n|$ divergen ⟹ <b>bersyarat</b> (mis. $\sum\frac{(-1)^n}{n}$).</div>
+    <div class="tip">🧭 <b>Alur memilih uji:</b> cek $\lim a_n$ → bentuk deret-p/geometri? → ada faktorial/pangkat $n$? (rasio/akar) → positif & turun? (integral/banding) → ganti tanda? (Leibniz).</div>
+
+    <h3>6.4 Deret Pangkat; Taylor & Maclaurin</h3>
+    <div class="formula">$$\sum_{n=0}^\infty c_n (x-a)^n,\quad \text{radius konvergensi } R=\lim\left|\frac{c_n}{c_{n+1}}\right|$$</div>
+    <div class="formula">$$\text{Taylor: } f(x)=\sum_{n=0}^\infty \frac{f^{(n)}(a)}{n!}(x-a)^n$$</div>
+    <p>Maclaurin = Taylor di $a=0$. Hafalkan deret ini:</p>
+    <table>
+      <tr><th>Fungsi</th><th>Deret Maclaurin</th><th>Berlaku</th></tr>
+      <tr><td>$e^x$</td><td>$\sum \frac{x^n}{n!}$</td><td>semua $x$</td></tr>
+      <tr><td>$\sin x$</td><td>$\sum \frac{(-1)^n x^{2n+1}}{(2n+1)!}$</td><td>semua $x$</td></tr>
+      <tr><td>$\cos x$</td><td>$\sum \frac{(-1)^n x^{2n}}{(2n)!}$</td><td>semua $x$</td></tr>
+      <tr><td>$\frac{1}{1-x}$</td><td>$\sum x^n$</td><td>$|x|&lt;1$</td></tr>
+      <tr><td>$\ln(1+x)$</td><td>$\sum \frac{(-1)^{n+1}x^n}{n}$</td><td>$-1&lt;x\le1$</td></tr>
+      <tr><td>$\arctan x$</td><td>$\sum \frac{(-1)^n x^{2n+1}}{2n+1}$</td><td>$|x|\le1$</td></tr>
+    </table>
+
+    <h3>6.5 Diferensiasi & Integrasi Deret Pangkat</h3>
+    <ul>
+      <li>Di dalam interval konvergensi, deret pangkat boleh diturunkan/diintegralkan <b>suku demi suku</b>; $R$ tetap (cek ujung interval terpisah).</li>
+      <li>Trik membuat deret baru: substitusi (mis. ganti $x\to -x^2$), turunkan, atau integralkan deret yang sudah dihafal.</li>
+    </ul>
+    <div class="tip"><b>Contoh:</b> Dari $\frac{1}{1-x}=\sum x^n$, integralkan ⟹ $-\ln(1-x)=\sum\frac{x^{n+1}}{n+1}$. Ganti $x\to -x^2$ pada $\frac1{1-x}$ ⟹ $\frac{1}{1+x^2}=\sum(-1)^n x^{2n}$, integralkan ⟹ $\arctan x$.</div>
+    <details><summary>Ringkasan rumus BAB 6 (kartu kilat)</summary>
+      <p>Deret-p: konv ⟺ $p&gt;1$. Geometri: $\frac{a}{1-r}$, $|r|&lt;1$. Rasio: $\lim|a_{n+1}/a_n|&lt;1$. Taylor: $\sum\frac{f^{(n)}(a)}{n!}(x-a)^n$. Hafal deret $e^x,\sin,\cos,\frac1{1-x},\ln(1+x),\arctan$.</p>
+    </details>
+    <div class="card" style="margin-top:18px">
+      <div class="chk" data-key="mat-b6"><input type="checkbox" id="mat-b6"><label for="mat-b6">✅ Saya paham BAB 6 (bisa pilih uji konvergensi tepat & turunkan deret Taylor)</label></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LATIHAN ============ -->
+<section id="latihan">
+  <h2>✏️ Bank Soal Latihan</h2>
+  <p class="muted">Kerjakan dulu di kertas, baru klik "Lihat pembahasan". 🟢 mudah · 🟡 sedang · 🔴 sulit.</p>
+  <div class="subnav" id="latnav">
+    <button data-l="l4" class="active">BAB 4</button>
+    <button data-l="l5">BAB 5</button>
+    <button data-l="l6">BAB 6</button>
+  </div>
+  <div class="matpage active" id="l4"></div>
+  <div class="matpage" id="l5"></div>
+  <div class="matpage" id="l6"></div>
+</section>
+
+<!-- ============ MOCK ============ -->
+<section id="mock">
+  <h2>⏱️ Mock Exam (90 menit · 10 soal)</h2>
+  <p class="muted">Simulasi ujian: campuran BAB 4–6. Kerjakan besok pagi dengan timer aktif, lalu cocokkan & isi skormu.</p>
+  <div class="timerbar">
+    <div>⏰ Sisa waktu: <span class="clk" id="mclk">90:00</span></div>
+    <div>
+      <button class="btn" id="mstart">Mulai</button>
+      <button class="btn ghost" id="mpause">Jeda</button>
+      <button class="btn red" id="mreset">Reset</button>
+    </div>
+  </div>
+  <div id="mockq" style="margin-top:14px"></div>
+  <div class="card">
+    <h3 style="margin-top:4px">Catat hasilmu</h3>
+    <p>Jumlah benar (dari 10): <input type="number" id="mscore" min="0" max="10" style="width:70px;padding:6px;border-radius:6px;border:1px solid var(--line);background:#0b1220;color:var(--ink)"> <button class="btn" onclick="saveMock()">Simpan skor</button></p>
+    <p class="muted" id="mockmsg"></p>
+  </div>
+</section>
+
+<!-- ============ TOLAK UKUR ============ -->
+<section id="tolakukur">
+  <h2>🎯 Tolak Ukur Keberhasilan</h2>
+  <p class="muted">Indikator terukur. Centang yang sudah tercapai — target minimal lulus persiapan: <b>≥ 80% tercentang</b> sebelum tidur.</p>
+  <div class="progwrap"><div class="progbar" id="tubar"></div></div>
+  <p class="muted" id="tucount" style="margin-top:0"></p>
+
+  <div class="card" id="tu-list"></div>
+
+  <div class="card">
+    <h3 style="margin-top:4px">Skala penilaian kesiapan</h3>
+    <table>
+      <tr><th>% Tercapai</th><th>Status</th><th>Tindakan</th></tr>
+      <tr><td>90–100%</td><td>🟢 Siap tempur</td><td>Tidur cukup, pagi cukup review rumus + 2 soal pemanasan.</td></tr>
+      <tr><td>75–89%</td><td>🟡 Cukup siap</td><td>Fokus tambal 1–2 topik terlemah malam ini, sisanya pagi.</td></tr>
+      <tr><td>60–74%</td><td>🟠 Waspada</td><td>Prioritaskan BAB berbobot tinggi (4 & 6); relakan topik tersulit, kuasai yang dasar.</td></tr>
+      <tr><td>&lt;60%</td><td>🔴 Mode triase</td><td>Kuasai rumus master + soal mudah-sedang tiap bab. Target: jangan nol di topik manapun.</td></tr>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ---------- DATA: JADWAL ---------- */
+const today=[
+  ["11:30–11:45","Setup & baca rencana, siapkan alat tulis + air minum","",0],
+  ["11:45–13:15","BAB 4.1–4.2: Luas antar kurva & Volume (cakram/cincin/kulit) + 4 soal","",0],
+  ["13:15–14:00","🍽️ Istirahat & makan siang","brk",0],
+  ["14:00–15:30","BAB 4.3–4.5: Panjang kurva, luas permukaan, titik berat + 3 soal","",0],
+  ["15:30–15:45","☕ Break + active recall: tutup mata, sebut rumus BAB 4","brk",0],
+  ["15:45–17:15","BAB 5.1–5.3: Parametrik, koordinat & grafik kutub + sketsa kurva","",0],
+  ["17:15–17:45","🍵 Break / sholat / jalan sebentar","brk",0],
+  ["17:45–19:00","BAB 5.4–5.5: Luas kutub, garis singgung, panjang busur + 3 soal","",0],
+  ["19:00–19:45","🍽️ Makan malam + istirahat","brk",0],
+  ["19:45–21:15","BAB 6.1–6.3: Barisan, deret, uji konvergensi (kuasai tabel uji!)","",0],
+  ["21:15–21:30","☕ Break","brk",0],
+  ["21:30–22:45","BAB 6.4–6.5: Deret pangkat, Taylor/Maclaurin, diff & integrasi","",0],
+  ["22:45–23:00","Review kilat: baca semua 'kartu kilat' + isi Tolak Ukur","",0],
+  ["23:00","😴 TIDUR (target ≥7 jam)","brk",0],
+];
+const tom=[
+  ["06:30","Bangun, sarapan ringan, mandi","brk",0],
+  ["07:00–08:30","⏱️ MOCK EXAM berwaktu (90 menit, jangan buka catatan)","",0],
+  ["08:30–09:15","Koreksi mock, catat tiap kesalahan & tipe soalnya","",0],
+  ["09:15–10:00","Review rumus master + 2-3 topik terlemah dari mock","",0],
+  ["10:00–10:20","Berangkat, bawa alat lengkap, tarik napas tenang","brk",0],
+  ["10:30","📝 UJIAN KALKULUS 2 — semangat, Sakti!","exam",0],
+];
+
+/* ---------- DATA: SOAL ---------- */
+const soal={
+ l4:[
+  ["🟢","4.1 Luas","Hitung luas daerah yang dibatasi $y=x^2$ dan $y=2x$.",
+   "Titik potong: $x^2=2x \\Rightarrow x=0,2$. Pada $[0,2]$, $2x\\ge x^2$. $A=\\int_0^2(2x-x^2)dx=[x^2-\\tfrac{x^3}{3}]_0^2=4-\\tfrac83=\\tfrac43$."],
+  ["🟡","4.2 Volume cakram","Daerah di bawah $y=\\sqrt{x}$, $0\\le x\\le4$, diputar terhadap sumbu-x. Cari volume.",
+   "Cakram: $V=\\pi\\int_0^4(\\sqrt x)^2dx=\\pi\\int_0^4 x\\,dx=\\pi[\\tfrac{x^2}{2}]_0^4=8\\pi$."],
+  ["🟡","4.2 Volume cincin","Daerah antara $y=x$ dan $y=x^2$ diputar terhadap sumbu-x. Cari volume.",
+   "Pada $[0,1]$, $x\\ge x^2$. Cincin: $V=\\pi\\int_0^1(x^2-(x^2)^2)dx=\\pi\\int_0^1(x^2-x^4)dx=\\pi(\\tfrac13-\\tfrac15)=\\tfrac{2\\pi}{15}$."],
+  ["🔴","4.2 Kulit tabung","Daerah di bawah $y=x^2$, $0\\le x\\le2$, diputar terhadap sumbu-y. Gunakan metode kulit.",
+   "Kulit: $V=2\\pi\\int_0^2 x\\cdot x^2\\,dx=2\\pi\\int_0^2 x^3dx=2\\pi[\\tfrac{x^4}{4}]_0^2=2\\pi\\cdot4=8\\pi$."],
+  ["🟡","4.3 Panjang kurva","Panjang kurva $y=\\tfrac23 x^{3/2}$ dari $x=0$ ke $x=3$.",
+   "$y'=x^{1/2}$, $1+y'^2=1+x$. $L=\\int_0^3\\sqrt{1+x}\\,dx=[\\tfrac23(1+x)^{3/2}]_0^3=\\tfrac23(8-1)=\\tfrac{14}{3}$."],
+  ["🔴","4.4 Luas permukaan","Kurva $y=\\sqrt{x}$, $0\\le x\\le1$ diputar terhadap sumbu-x. Susun integral luas permukaan.",
+   "$y'=\\tfrac{1}{2\\sqrt x}$, $1+y'^2=1+\\tfrac1{4x}$. $S=2\\pi\\int_0^1\\sqrt x\\sqrt{1+\\tfrac1{4x}}dx=2\\pi\\int_0^1\\sqrt{x+\\tfrac14}dx=2\\pi[\\tfrac23(x+\\tfrac14)^{3/2}]_0^1=\\tfrac{4\\pi}{3}\\big((\\tfrac54)^{3/2}-(\\tfrac14)^{3/2}\\big)$."],
+  ["🔴","4.5 Titik berat","Cari $\\bar x$ centroid daerah di bawah $y=x^2$, $0\\le x\\le1$ (di atas sumbu-x).",
+   "$A=\\int_0^1 x^2dx=\\tfrac13$. $\\bar x=\\tfrac1A\\int_0^1 x\\cdot x^2dx=3\\int_0^1 x^3dx=3\\cdot\\tfrac14=\\tfrac34$."],
+ ],
+ l5:[
+  ["🟢","5.1 Parametrik","Diberi $x=t^2,\\ y=t^3$. Cari $\\dfrac{dy}{dx}$.",
+   "$\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}=\\frac{3t^2}{2t}=\\frac{3t}{2}$."],
+  ["🟡","5.1 Panjang parametrik","Panjang kurva $x=\\cos t,\\ y=\\sin t$, $0\\le t\\le\\pi$.",
+   "$\\dot x=-\\sin t,\\ \\dot y=\\cos t$, $\\sqrt{\\dot x^2+\\dot y^2}=1$. $L=\\int_0^\\pi 1\\,dt=\\pi$ (setengah keliling lingkaran satuan)."],
+  ["🟢","5.2 Konversi","Ubah titik kutub $(2,\\tfrac{\\pi}{3})$ ke Cartesius.",
+   "$x=2\\cos\\tfrac\\pi3=2\\cdot\\tfrac12=1$, $y=2\\sin\\tfrac\\pi3=2\\cdot\\tfrac{\\sqrt3}{2}=\\sqrt3$. Jadi $(1,\\sqrt3)$."],
+  ["🟡","5.3 Grafik","Identifikasi kurva $r=1+\\cos\\theta$ dan sebutkan ciri grafiknya.",
+   "Kardioid (karena $a=b=1$). Simetris terhadap sumbu-x (sumbu polar), $r=2$ di $\\theta=0$, $r=0$ di $\\theta=\\pi$ (membentuk lekukan)."],
+  ["🟡","5.4 Luas kutub","Cari luas daerah dalam satu lingkaran $r=2\\sin\\theta$.",
+   "$\\theta:0\\to\\pi$. $A=\\tfrac12\\int_0^\\pi(2\\sin\\theta)^2d\\theta=2\\int_0^\\pi\\sin^2\\theta\\,d\\theta=2\\cdot\\tfrac\\pi2=\\pi$. (Sesuai lingkaran jari-jari 1.)"],
+  ["🔴","5.4 Luas satu daun","Cari luas satu daun mawar $r=\\cos 2\\theta$.",
+   "Satu daun: $\\theta\\in[-\\tfrac\\pi4,\\tfrac\\pi4]$. $A=\\tfrac12\\int_{-\\pi/4}^{\\pi/4}\\cos^2 2\\theta\\,d\\theta=\\tfrac12\\cdot\\tfrac12\\int_{-\\pi/4}^{\\pi/4}(1+\\cos4\\theta)d\\theta=\\tfrac14[\\theta+\\tfrac{\\sin4\\theta}{4}]_{-\\pi/4}^{\\pi/4}=\\tfrac14\\cdot\\tfrac\\pi2=\\tfrac\\pi8$."],
+  ["🔴","5.5 Panjang busur kutub","Susun integral panjang busur kardioid $r=1+\\cos\\theta$, $0\\le\\theta\\le2\\pi$.",
+   "$r'=-\\sin\\theta$. $r^2+r'^2=(1+\\cos\\theta)^2+\\sin^2\\theta=2+2\\cos\\theta=4\\cos^2(\\theta/2)$. $L=\\int_0^{2\\pi}2|\\cos(\\theta/2)|\\,d\\theta=8$."],
+ ],
+ l6:[
+  ["🟢","6.1 Barisan","Tentukan $\\lim_{n\\to\\infty}\\dfrac{3n^2+1}{2n^2+n}$.",
+   "Bagi pangkat tertinggi: $\\frac{3+1/n^2}{2+1/n}\\to\\frac{3}{2}$. Konvergen ke $\\tfrac32$."],
+  ["🟢","6.2 Geometri","Jumlahkan $\\sum_{n=0}^\\infty 3\\left(\\tfrac12\\right)^n$.",
+   "Geometri $a=3,r=\\tfrac12$: $S=\\frac{a}{1-r}=\\frac{3}{1/2}=6$."],
+  ["🟡","6.3 Deret-p","Apakah $\\sum_{n=1}^\\infty \\dfrac{1}{n^{3/2}}$ konvergen?",
+   "Deret-p dengan $p=\\tfrac32&gt;1$ ⟹ <b>konvergen</b>."],
+  ["🟡","6.3 Uji rasio","Selidiki $\\sum \\dfrac{2^n}{n!}$.",
+   "$\\frac{a_{n+1}}{a_n}=\\frac{2^{n+1}/(n+1)!}{2^n/n!}=\\frac{2}{n+1}\\to0&lt;1$ ⟹ <b>konvergen</b> (mutlak)."],
+  ["🟡","6.3 Leibniz","Selidiki $\\sum \\dfrac{(-1)^n}{\\sqrt n}$ — konvergen mutlak/bersyarat?",
+   "Ganti tanda, $b_n=\\tfrac1{\\sqrt n}$ turun & $\\to0$ ⟹ konvergen (Leibniz). Tapi $\\sum\\tfrac1{\\sqrt n}$ (deret-p $p=\\tfrac12$) divergen ⟹ <b>konvergen bersyarat</b>."],
+  ["🔴","6.4 Radius konvergensi","Cari radius konvergensi $\\sum \\dfrac{x^n}{n\\,3^n}$.",
+   "Rasio: $\\left|\\frac{x^{n+1}/((n+1)3^{n+1})}{x^n/(n3^n)}\\right|=\\frac{|x|}{3}\\cdot\\frac{n}{n+1}\\to\\frac{|x|}{3}$. Konvergen jika $&lt;1$ ⟹ $|x|&lt;3$, $R=3$."],
+  ["🔴","6.4/6.5 Deret Taylor","Cari deret Maclaurin $f(x)=\\dfrac{1}{1+x^2}$ lalu deret untuk $\\arctan x$.",
+   "Substitusi $x\\to -x^2$ pada $\\frac1{1-u}=\\sum u^n$: $\\frac1{1+x^2}=\\sum(-1)^n x^{2n}$. Integralkan suku demi suku: $\\arctan x=\\sum\\frac{(-1)^n x^{2n+1}}{2n+1}$, $|x|\\le1$."],
+ ]
+};
+
+/* ---------- DATA: MOCK ---------- */
+const mock=[
+ ["1","BAB 4","Luas daerah antara $y=4-x^2$ dan sumbu-x.",
+  "Akar: $x=\\pm2$. $A=\\int_{-2}^2(4-x^2)dx=[4x-\\tfrac{x^3}3]_{-2}^2=2(8-\\tfrac83)=\\tfrac{32}{3}$."],
+ ["2","BAB 4","Volume benda putar daerah $y=\\sqrt x$, $0\\le x\\le4$ terhadap sumbu-x.",
+  "$V=\\pi\\int_0^4 x\\,dx=8\\pi$."],
+ ["3","BAB 4","Panjang kurva $y=\\tfrac23 x^{3/2}$, $0\\le x\\le3$.",
+  "$1+y'^2=1+x$, $L=\\int_0^3\\sqrt{1+x}dx=\\tfrac23(8-1)=\\tfrac{14}{3}$."],
+ ["4","BAB 4","$\\bar x$ centroid daerah di bawah $y=x^2$, $0\\le x\\le1$.",
+  "$A=\\tfrac13$, $\\bar x=3\\int_0^1 x^3dx=\\tfrac34$."],
+ ["5","BAB 5","$\\dfrac{dy}{dx}$ untuk $x=t^2,\\ y=t^3$ di $t=1$.",
+  "$\\frac{dy}{dx}=\\frac{3t}{2}=\\frac32$ di $t=1$."],
+ ["6","BAB 5","Ubah $(2,\\tfrac\\pi3)$ kutub ke Cartesius.",
+  "$(1,\\sqrt3)$."],
+ ["7","BAB 5","Luas satu daun mawar $r=\\cos2\\theta$.",
+  "$A=\\tfrac\\pi8$."],
+ ["8","BAB 6","Jumlah $\\sum_{n=0}^\\infty 3(\\tfrac12)^n$.",
+  "$=\\frac{3}{1-1/2}=6$."],
+ ["9","BAB 6","Selidiki konvergensi $\\sum\\dfrac{2^n}{n!}$.",
+  "Uji rasio $\\to0&lt;1$ ⟹ konvergen mutlak."],
+ ["10","BAB 6","Radius konvergensi $\\sum\\dfrac{x^n}{n\\,3^n}$.",
+  "$R=3$."],
+];
+
+/* ---------- DATA: TOLAK UKUR ---------- */
+const tu=[
+ ["tu1","📚 Materi BAB 4: bisa menjelaskan kapan pakai cakram vs cincin vs kulit tanpa melihat catatan."],
+ ["tu2","📚 Materi BAB 4: hafal & paham rumus panjang kurva, luas permukaan, dan titik berat."],
+ ["tu3","📚 Materi BAB 5: bisa konversi kutub⇄Cartesius dan sketsa minimal 4 jenis grafik kutub."],
+ ["tu4","📚 Materi BAB 5: bisa susun integral luas kutub & panjang busur dengan batas benar."],
+ ["tu5","📚 Materi BAB 6: hafal tabel uji konvergensi dan bisa memilih uji yang tepat untuk soal acak."],
+ ["tu6","📚 Materi BAB 6: hafal 6 deret Maclaurin baku dan bisa turunkan deret baru via substitusi/integrasi."],
+ ["tu7","✏️ Latihan: menyelesaikan ≥80% soal 🟢 mudah dengan benar di semua bab."],
+ ["tu8","✏️ Latihan: menyelesaikan ≥60% soal 🟡 sedang dengan benar di semua bab."],
+ ["tu9","✏️ Latihan: mencoba semua soal 🔴 sulit (boleh lihat pembahasan setelah berusaha)."],
+ ["tu10","⏱️ Mock exam: skor ≥ 7/10 dalam batas waktu 90 menit."],
+ ["tu11","⏱️ Mock exam: setiap kesalahan sudah dikoreksi & dipahami sebab kelirunya."],
+ ["tu12","⚡ Kecepatan: bisa menyelesaikan 1 soal integral standar dalam ≤ 6 menit."],
+ ["tu13","🧠 Active recall: bisa menulis ulang semua 'kartu kilat' rumus dari ingatan."],
+ ["tu14","😴 Kesiapan fisik: berhenti belajar ≤ 23:00 dan tidur ≥ 7 jam."],
+ ["tu15","🎒 Logistik: alat tulis, kalkulator (jika boleh), & kartu ujian sudah disiapkan malam ini."],
+];
+
+/* ---------- STATE / STORAGE ---------- */
+const KEY='kalk2_state_v1';
+let state=load();
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+
+/* ---------- NAV ---------- */
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.querySelectorAll('main > section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(b.dataset.t).classList.add('active');
+  window.scrollTo(0,0);
+});
+function subnav(navId,pageSel){
+  document.querySelectorAll(navId+' button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll(navId+' button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll(pageSel).forEach(p=>p.classList.remove('active'));
+    const id=b.dataset.m||b.dataset.l;
+    document.getElementById(id).classList.add('active');
+  });
+}
+subnav('#matnav','.matpage'); subnav('#latnav','#latihan .matpage');
+
+/* ---------- RENDER JADWAL ---------- */
+function renderTL(arr,el,prefix){
+  el.innerHTML=arr.map((s,i)=>{
+    const k=prefix+i, done=state[k]?'done':'';
+    return `<div class="slot ${s[1]}">
+      <div class="t">${s[0]}</div>
+      <div class="chk ${done}" data-key="${k}" style="border:none;padding:2px 0">
+        <input type="checkbox" id="${k}" ${state[k]?'checked':''}>
+        <label for="${k}">${s[2]}</label>
+      </div></div>`;
+  }).join('');
+}
+renderTL(today,document.getElementById('tl-today'),'jt');
+renderTL(tom,document.getElementById('tl-tom'),'jm');
+
+/* ---------- RENDER SOAL ---------- */
+function renderSoal(list,el){
+  el.innerHTML=list.map((q,i)=>{
+    const cls=q[0]==='🟢'?'b-e':q[0]==='🟡'?'b-m':'b-h';
+    return `<div class="q">
+      <div class="qh"><b>${q[0]} ${q[1]}</b><span class="badge ${cls}">soal ${i+1}</span></div>
+      <p>${q[2]}</p>
+      <button class="toggle" onclick="this.nextElementSibling.classList.toggle('show');typeset()">Lihat pembahasan</button>
+      <div class="ans"><b>Pembahasan:</b><br>${q[3]}</div>
+    </div>`;
+  }).join('');
+}
+renderSoal(soal.l4,document.getElementById('l4'));
+renderSoal(soal.l5,document.getElementById('l5'));
+renderSoal(soal.l6,document.getElementById('l6'));
+
+/* ---------- RENDER MOCK ---------- */
+document.getElementById('mockq').innerHTML=mock.map(q=>`
+  <div class="q">
+    <div class="qh"><b>No.${q[0]} <span class="muted">(${q[1]})</span></b></div>
+    <p>${q[2]}</p>
+    <button class="toggle" onclick="this.nextElementSibling.classList.toggle('show');typeset()">Lihat kunci</button>
+    <div class="ans"><b>Kunci:</b> ${q[3]}</div>
+  </div>`).join('');
+
+/* ---------- RENDER TOLAK UKUR ---------- */
+document.getElementById('tu-list').innerHTML=tu.map(t=>{
+  const done=state[t[0]]?'done':'';
+  return `<div class="chk ${done}" data-key="${t[0]}">
+    <input type="checkbox" id="${t[0]}" ${state[t[0]]?'checked':''}>
+    <label for="${t[0]}">${t[1]}</label></div>`;
+}).join('');
+
+/* ---------- CHECKBOX HANDLER ---------- */
+document.addEventListener('change',e=>{
+  if(e.target.type==='checkbox'){
+    const wrap=e.target.closest('[data-key]');
+    if(!wrap)return;
+    const k=wrap.dataset.key;
+    state[k]=e.target.checked;
+    wrap.classList.toggle('done',e.target.checked);
+    save(); updateStats();
+  }
+});
+
+/* ---------- STATS ---------- */
+function pct(keys){const d=keys.filter(k=>state[k]).length;return keys.length?Math.round(d/keys.length*100):0;}
+function updateStats(){
+  const matKeys=['mat-b4','mat-b5','mat-b6'];
+  const jadKeys=[...today.map((_,i)=>'jt'+i),...tom.map((_,i)=>'jm'+i)];
+  const tuKeys=tu.map(t=>t[0]);
+  const mp=pct(matKeys),jp=pct(jadKeys),tp=pct(tuKeys);
+  document.getElementById('s-mat').textContent=mp+'%';
+  document.getElementById('s-jad').textContent=jp+'%';
+  document.getElementById('s-tu').textContent=tp+'%';
+  document.getElementById('s-mock').textContent=state.mockbest!=null?state.mockbest+'/10':'—';
+  document.getElementById('jadbar').style.width=jp+'%';
+  document.getElementById('tubar').style.width=tp+'%';
+  const d=tuKeys.filter(k=>state[k]).length;
+  document.getElementById('tucount').textContent=`${d} dari ${tuKeys.length} indikator tercapai (${tp}%) — target ≥80%.`;
+}
+
+/* ---------- MOCK SCORE ---------- */
+function saveMock(){
+  const v=parseInt(document.getElementById('mscore').value);
+  if(isNaN(v)){document.getElementById('mockmsg').textContent='Masukkan angka 0–10 dulu.';return;}
+  if(state.mockbest==null||v>state.mockbest)state.mockbest=v;
+  save();updateStats();
+  let msg=v>=8?'🟢 Mantap! Kamu siap. Tinggal jaga kondisi.':v>=7?'🟡 Bagus, lewat target. Tambal soal yang salah.':v>=5?'🟠 Cukup. Fokus review tipe soal yang keliru.':'🔴 Ulangi topik dasar tiap bab — kamu masih punya waktu pagi ini.';
+  document.getElementById('mockmsg').textContent=`Skor tersimpan: ${v}/10 (terbaik: ${state.mockbest}/10). ${msg}`;
+}
+
+/* ---------- MOCK TIMER ---------- */
+let mt=90*60,mtimer=null;
+function fmt(s){const m=Math.floor(s/60),x=s%60;return String(m).padStart(2,'0')+':'+String(x).padStart(2,'0');}
+function tick(){mt--;document.getElementById('mclk').textContent=fmt(mt);if(mt<=0){clearInterval(mtimer);mtimer=null;document.getElementById('mclk').textContent='WAKTU HABIS';}}
+document.getElementById('mstart').onclick=()=>{if(!mtimer)mtimer=setInterval(tick,1000);};
+document.getElementById('mpause').onclick=()=>{clearInterval(mtimer);mtimer=null;};
+document.getElementById('mreset').onclick=()=>{clearInterval(mtimer);mtimer=null;mt=90*60;document.getElementById('mclk').textContent='90:00';};
+
+/* ---------- COUNTDOWN ---------- */
+const examDate=new Date(2026,5,22,10,30,0); // 22 Juni 2026 10:30
+function cd(){
+  const now=new Date(),diff=examDate-now;
+  const el=document.getElementById('cd');
+  if(diff<=0){el.textContent='Saatnya ujian — semangat!';return;}
+  const h=Math.floor(diff/3.6e6),m=Math.floor(diff%3.6e6/6e4),s=Math.floor(diff%6e4/1000);
+  el.textContent=`${h} jam ${m} mnt ${s} dtk`;
+}
+setInterval(cd,1000);cd();
+
+/* ---------- TYPESET ---------- */
+function typeset(){if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise();}
+
+/* ---------- RESET ---------- */
+function resetAll(){if(confirm('Hapus semua progres & centang?')){state={};save();location.reload();}}
+
+updateStats();
+window.addEventListener('load',()=>setTimeout(typeset,600));
+</script>
+</body>
+</html>
