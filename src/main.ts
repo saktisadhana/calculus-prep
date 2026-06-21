@@ -121,12 +121,8 @@ function renderDashboard() {
 //  SECTION: JADWAL (Schedule) — Flexible + Pomodoro
 // ===================================================================
 
-// --- Web Audio API alarm ---
 let audioCtx: AudioContext | null = null;
 let alarmPlaying = false;
-let alarmOsc: OscillatorNode | null = null;
-let alarmGain: GainNode | null = null;
-let alarmTimeout: ReturnType<typeof setTimeout> | null = null;
 
 function getAudioCtx(): AudioContext {
   if (!audioCtx) audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -136,39 +132,48 @@ function getAudioCtx(): AudioContext {
 function playAlarm() {
   if (alarmPlaying) return;
   alarmPlaying = true;
+
   const ctx = getAudioCtx();
-  alarmGain = ctx.createGain();
-  alarmGain.gain.value = 0.35;
-  alarmGain.connect(ctx.destination);
-  alarmOsc = ctx.createOscillator();
-  alarmOsc.type = 'sine';
-  alarmOsc.connect(alarmGain);
-  // Pulsing alarm pattern
-  let t = ctx.currentTime;
-  for (let i = 0; i < 12; i++) {
-    alarmOsc.frequency.setValueAtTime(880, t);
-    alarmGain.gain.setValueAtTime(0.35, t);
-    t += 0.15;
-    alarmOsc.frequency.setValueAtTime(660, t);
-    alarmGain.gain.setValueAtTime(0.25, t);
-    t += 0.15;
-    alarmGain.gain.setValueAtTime(0, t);
-    t += 0.1;
+  
+  function chime(freq: number, delaySec: number) {
+    const gain = ctx.createGain();
+    gain.connect(ctx.destination);
+    const osc = ctx.createOscillator();
+    osc.type = 'sine'; // Gentle sine wave
+    osc.frequency.value = freq;
+    osc.connect(gain);
+    
+    const startTime = ctx.currentTime + delaySec;
+    osc.start(startTime);
+    
+    // Soft attack and smooth decay
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.5, startTime + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.01, startTime + 1.5);
+    osc.stop(startTime + 1.5);
   }
-  alarmOsc.start();
-  alarmOsc.stop(t);
-  alarmOsc.onended = () => { alarmPlaying = false; };
-  alarmTimeout = setTimeout(stopAlarm, 5000);
-  // Also try Notification
+
+  // Play a soft "Ding-Dong" (C5 -> E5)
+  chime(523.25, 0);   
+  chime(659.25, 0.4); 
+  
+  // Repeat once
+  chime(523.25, 2.0); 
+  chime(659.25, 2.4);
+
+  // Auto-reset alarm state after the chimes finish
+  setTimeout(() => {
+    alarmPlaying = false;
+  }, 4500);
+
   if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification('Pomodoro selesai!', { body: 'Waktunya istirahat atau lanjut sesi berikutnya.' });
+    new Notification('Waktu Habis!', { body: 'Sesi selesai. Saatnya istirahat/fokus!' });
   }
 }
 
 function stopAlarm() {
-  if (alarmOsc) try { alarmOsc.stop(); } catch { /* already stopped */ }
+  // Since it now stops automatically, we just clear the flag
   alarmPlaying = false;
-  if (alarmTimeout) { clearTimeout(alarmTimeout); alarmTimeout = null; }
 }
 
 // --- Pomodoro state ---
@@ -183,11 +188,28 @@ interface PomBlock {
 }
 
 let pomTimer: ReturnType<typeof setInterval> | null = null;
-let pomRemaining = 0; // seconds
-let pomMode: PomMode = 'idle';
-let pomSchedule: PomBlock[] = [];
-let pomSessionIndex = 0; 
-let pomTotalFocus = 0; // total focus seconds this run
+let pomRemaining = state.pomSavedState?.remaining || 0; // seconds
+let pomMode: PomMode = state.pomSavedState?.mode || 'idle';
+let pomSchedule: PomBlock[] = state.pomSavedState?.schedule || [];
+let pomSessionIndex = state.pomSavedState?.sessionIndex || 0; 
+let pomTotalFocus = state.pomSavedState?.totalFocus || 0; // total focus seconds this run
+
+function persistPomState() {
+  state.pomSavedState = {
+    remaining: pomRemaining,
+    mode: pomMode,
+    schedule: pomSchedule,
+    sessionIndex: pomSessionIndex,
+    totalFocus: pomTotalFocus
+  };
+  save();
+}
+
+// Persist automatically when leaving the app or hiding it
+window.addEventListener('beforeunload', persistPomState);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') persistPomState();
+});
 
 function pomDefaults() {
   return {
@@ -250,8 +272,35 @@ function pomModeClass(m: PomMode): string {
 function updatePomUI() {
   const mins = Math.floor(pomRemaining / 60);
   const secs = pomRemaining % 60;
+  const timeStr = `${pad2(mins)}:${pad2(secs)}`;
+  
   const clock = document.getElementById('pomClock');
-  if (clock) clock.textContent = `${pad2(mins)}:${pad2(secs)}`;
+  if (clock) clock.textContent = timeStr;
+
+  // Global visibility
+  document.title = pomMode !== 'idle' ? `[${timeStr}] Kalkulus 2` : 'Kalkulus 2 Prep';
+  
+  const miniTimer = document.getElementById('topPomTimer');
+  if (miniTimer) {
+    if (pomMode === 'idle') {
+      miniTimer.style.display = 'none';
+      miniTimer.textContent = '';
+    } else {
+      miniTimer.style.display = 'inline-block';
+      miniTimer.textContent = `⏱ ${timeStr}`;
+      // Color based on focus or break
+      if (pomMode === 'focus') {
+        miniTimer.style.color = 'var(--primary)';
+        miniTimer.style.background = 'rgba(14,165,233,0.1)';
+      } else if (pomMode === 'busy') {
+        miniTimer.style.color = 'var(--warn)';
+        miniTimer.style.background = 'rgba(234,179,8,0.1)';
+      } else {
+        miniTimer.style.color = 'var(--success)';
+        miniTimer.style.background = 'rgba(34,197,94,0.1)';
+      }
+    }
+  }
 
   const label = document.getElementById('pomLabel');
   if (label) {
@@ -311,6 +360,7 @@ function advancePomodoro() {
   const nextBlock = pomSchedule[pomSessionIndex];
   pomMode = nextBlock.type;
   pomRemaining = nextBlock.duration * 60;
+  persistPomState();
 }
 
 function pomTick() {
@@ -323,6 +373,51 @@ function pomTick() {
   pomRemaining--;
   if (pomMode === 'focus') pomTotalFocus++;
   updatePomUI();
+}
+
+function syncPomToRealTime(): boolean {
+  if (pomSchedule.length === 0) return false;
+  const now = new Date();
+  const currentMin = now.getHours() * 60 + now.getMinutes();
+  const currentSec = now.getSeconds();
+
+  for (let i = 0; i < pomSchedule.length; i++) {
+    const block = pomSchedule[i];
+    const [startStr, endStr] = block.time.split('–');
+    if (!startStr || !endStr) continue;
+    
+    const [sh, sm] = startStr.split(':').map(Number);
+    const startMins = sh * 60 + sm;
+    const [eh, em] = endStr.split(':').map(Number);
+    let endMins = eh * 60 + em;
+    if (endMins <= startMins) endMins += 24 * 60; // handle midnight crossing
+
+    let checkMin = currentMin;
+    if (checkMin < startMins && startMins > 12 * 60 && checkMin < 12 * 60) {
+       checkMin += 24 * 60; // early morning but schedule is from last night
+    }
+
+    if (checkMin >= startMins && checkMin < endMins) {
+      pomSessionIndex = i;
+      pomMode = block.type;
+      
+      const elapsedMins = checkMin - startMins;
+      const elapsedSecs = elapsedMins * 60 + currentSec;
+      const totalSecs = block.duration * 60;
+      
+      pomRemaining = Math.max(0, totalSecs - elapsedSecs);
+      
+      // Calculate accumulated focus time up to this point
+      pomTotalFocus = 0;
+      for (let j = 0; j < i; j++) {
+        if (pomSchedule[j].type === 'focus') pomTotalFocus += pomSchedule[j].duration * 60;
+      }
+      if (pomMode === 'focus') pomTotalFocus += elapsedSecs;
+
+      return true;
+    }
+  }
+  return false;
 }
 
 function pomStart() {
@@ -348,12 +443,14 @@ function pomStart() {
   updatePomUI();
   const startBtn = document.getElementById('pomStart');
   if (startBtn) startBtn.textContent = 'Berjalan...';
+  persistPomState();
 }
 
 function pomPause() {
   if (pomTimer) { clearInterval(pomTimer); pomTimer = null; }
   const startBtn = document.getElementById('pomStart');
   if (startBtn) startBtn.textContent = 'Lanjut';
+  persistPomState();
 }
 
 function pomSkip() {
@@ -373,6 +470,7 @@ function pomReset() {
   updatePomUI();
   const startBtn = document.getElementById('pomStart');
   if (startBtn) startBtn.textContent = 'Mulai';
+  persistPomState();
 }
 
 function pomBusy() {
@@ -382,6 +480,44 @@ function pomBusy() {
   pomRemaining = busyMin * 60;
   updatePomUI();
   if (!pomTimer) pomTimer = setInterval(pomTick, 1000);
+  persistPomState();
+}
+
+function pomSyncTime() {
+  if (pomSchedule.length === 0) {
+    alert('Buat jadwal terlebih dahulu!');
+    return;
+  }
+  const synced = syncPomToRealTime();
+  if (synced) {
+    // Auto-check any focus sessions we skipped
+    for (let i = 0; i < pomSessionIndex; i++) {
+      const b = pomSchedule[i];
+      if (b.type === 'focus' && b.k) {
+        state[b.k] = true;
+        const chk = document.getElementById(b.k) as HTMLInputElement;
+        if (chk) {
+          chk.checked = true;
+          const wrap = chk.closest('.chk');
+          if (wrap) wrap.classList.add('done');
+        }
+      }
+    }
+    save();
+    updateStats();
+    updatePomUI();
+    
+    // Automatically start timer if not running
+    if (!pomTimer) {
+      getAudioCtx().resume();
+      pomTimer = setInterval(pomTick, 1000);
+      const startBtn = document.getElementById('pomStart');
+      if (startBtn) startBtn.textContent = 'Berjalan...';
+    }
+    persistPomState();
+  } else {
+    alert('Waktu saat ini berada di luar rentang jadwal (belum mulai atau sudah selesai).');
+  }
 }
 
 // --- Generate flexible timeline ---
@@ -499,6 +635,7 @@ function renderSchedule() {
         <button class="btn red sm" id="pomReset">Reset</button>
       </div>
       <div class="row" style="justify-content:center;margin-top:8px">
+        <button class="btn ghost sm" id="pomSyncBtn" style="color:var(--primary)">Sync Jam Sekarang</button>
         <button class="btn ghost sm" id="pomBusyBtn">Sibuk / Jeda (<input type="number" id="pomBusyDuration" value="30" min="5" max="120" style="width:45px;text-align:center;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font-size:13px;padding:2px 4px"> mnt)</button>
         <button class="btn ghost sm" id="pomStopAlarm" style="display:none">Stop Alarm</button>
       </div>
@@ -559,6 +696,7 @@ function renderSchedule() {
   document.getElementById('pomPause')!.onclick = pomPause;
   document.getElementById('pomSkip')!.onclick = pomSkip;
   document.getElementById('pomReset')!.onclick = pomReset;
+  document.getElementById('pomSyncBtn')!.onclick = pomSyncTime;
   document.getElementById('pomBusyBtn')!.onclick = pomBusy;
   document.getElementById('pomStopAlarm')!.onclick = () => {
     stopAlarm();
@@ -569,6 +707,11 @@ function renderSchedule() {
     const settings = readPomForm();
     savePomSettings(settings);
     document.getElementById('pomTimeline')!.innerHTML = generateTimeline();
+    pomSessionIndex = 0;
+    pomRemaining = 0;
+    pomMode = 'idle';
+    persistPomState();
+    updatePomUI();
   };
   document.getElementById('pomSaveSettings')!.onclick = () => {
     savePomSettings(readPomForm());
@@ -578,9 +721,35 @@ function renderSchedule() {
   };
 
   // Auto-generate on load if settings exist
-  if (d.startTime) {
+  if (pomSchedule.length > 0) {
+    document.getElementById('pomTimeline')!.innerHTML = generateTimelineFromExisting();
+    updatePomUI();
+    if (pomMode !== 'idle') {
+      const startBtn = document.getElementById('pomStart');
+      if (startBtn) startBtn.textContent = 'Lanjut';
+    }
+  } else if (d.startTime) {
     document.getElementById('pomTimeline')!.innerHTML = generateTimeline();
   }
+}
+
+function generateTimelineFromExisting(): string {
+  if (pomSchedule.length === 0) return '<p class="muted">Atur waktu mulai dan tekan "Buat jadwal".</p>';
+  const endTime = pomSchedule[pomSchedule.length - 1].time.split('–')[1] || 'Selesai';
+  let html = pomSchedule.map(b => {
+    if (b.type !== 'focus') return `<div class="slot brk"><div class="t">${b.time}</div><div>${b.desc}</div></div>`;
+    const k = (b as any).k;
+    const done = state[k] ? 'done' : '';
+    return `<div class="slot">
+      <div class="t">${b.time}</div>
+      <div class="chk ${done}" data-key="${k}" style="border:none;padding:2px 0">
+        <input type="checkbox" id="${k}" ${state[k] ? 'checked' : ''}>
+        <label for="${k}">${b.desc}</label>
+      </div>
+    </div>`;
+  }).join('');
+  html += `<div class="slot brk"><div class="t">${endTime}</div><div>Selesai — istirahat penuh, tidur cukup!</div></div>`;
+  return html;
 }
 
 function renderExamTL(): string {
